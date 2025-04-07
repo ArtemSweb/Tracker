@@ -7,8 +7,12 @@
 
 import UIKit
 
-class TrackerViewController: UIViewController, UITabBarDelegate {
+class TrackerViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
     
+    var categories: [TrackerCategory] = []
+    var completedTrackers: [TrackerRecord] = []
+    
+    // MARK: - UI компоненты
     private let addTrackingButton: UIButton = {
         let button = UIButton()
         button.setTitle("", for: .normal)
@@ -20,6 +24,7 @@ class TrackerViewController: UIViewController, UITabBarDelegate {
     private let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .compact
         return datePicker
     }()
     
@@ -60,6 +65,20 @@ class TrackerViewController: UIViewController, UITabBarDelegate {
         return stackView
     }()
     
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: UICollectionViewFlowLayout()
+        )
+        collectionView.backgroundColor = .clear
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.register(TrackerCollectionViewHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
+        return collectionView
+    }()
+    
+    //MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -70,7 +89,7 @@ class TrackerViewController: UIViewController, UITabBarDelegate {
     
     //MARK: - вспомогательные функции
     private func addViews() {
-        [plagStackView, addTrackingButton, headerTitleLabel, datePicker, searchBar].forEach {
+        [plagStackView, addTrackingButton, headerTitleLabel, datePicker, searchBar, collectionView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -105,12 +124,25 @@ class TrackerViewController: UIViewController, UITabBarDelegate {
             plagStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             plagImageView.widthAnchor.constraint(equalToConstant: 80),
             plagImageView.heightAnchor.constraint(equalToConstant: 80),
+            
+            collectionView.topAnchor.constraint(equalTo: plagStackView.bottomAnchor, constant: 24),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
     
     @objc
     private func addTrackingButtonTapped() {
-        print("add Tracker")
-        
+
     }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        <#code#>
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        <#code#>
+    }
+
 }
