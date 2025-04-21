@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TrackerViewController: UIViewController, UITabBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
+class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     var categories: [TrackerCategory] = []
     var completedTrackers: [TrackerRecord] = []
@@ -17,7 +17,6 @@ class TrackerViewController: UIViewController, UITabBarDelegate, UICollectionVie
         let button = UIButton()
         button.setTitle("", for: .normal)
         button.setImage(UIImage(named: "plus")?.withRenderingMode(.alwaysOriginal), for: .normal)
-        button.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -83,13 +82,18 @@ class TrackerViewController: UIViewController, UITabBarDelegate, UICollectionVie
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        addTrackingButton.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+        
         addViews()
         addConstraints()
     }
     
     //MARK: - вспомогательные функции
     private func addViews() {
-        [plagStackView, addTrackingButton, headerTitleLabel, datePicker, searchBar, collectionView].forEach {
+        [plagStackView, headerTitleLabel, searchBar, collectionView].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -102,16 +106,9 @@ class TrackerViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     private func addConstraints() {
         NSLayoutConstraint.activate([
-            addTrackingButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            addTrackingButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 13),
-            addTrackingButton.widthAnchor.constraint(equalToConstant: 19),
-            addTrackingButton.heightAnchor.constraint(equalToConstant: 18),
-            
-            datePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            datePicker.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
             datePicker.widthAnchor.constraint(equalToConstant: 100),
             
-            headerTitleLabel.topAnchor.constraint(equalTo: addTrackingButton.bottomAnchor, constant: 13),
+            headerTitleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 1),
             headerTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
             searchBar.topAnchor.constraint(equalTo: headerTitleLabel.bottomAnchor, constant: 7),
@@ -125,7 +122,7 @@ class TrackerViewController: UIViewController, UITabBarDelegate, UICollectionVie
             plagImageView.widthAnchor.constraint(equalToConstant: 80),
             plagImageView.heightAnchor.constraint(equalToConstant: 80),
             
-            collectionView.topAnchor.constraint(equalTo: plagStackView.bottomAnchor, constant: 24),
+            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -134,15 +131,79 @@ class TrackerViewController: UIViewController, UITabBarDelegate, UICollectionVie
     
     @objc
     private func addTrackingButtonTapped() {
-
+        let createTrackerSelection = CreateTrackerViewController()
+        let navigationController = UINavigationController(rootViewController: createTrackerSelection)
+        navigationController.modalPresentationStyle = .pageSheet
+        present(navigationController, animated: true)
     }
-    
+}
+
+extension TrackerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        <#code#>
+        return 4 //переписать на реальные трекеры!
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        <#code#>
-    }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as? TrackerCollectionViewCell else {
+            return UICollectionViewCell()
+        }
 
+        cell.daysLable.text = "2 дня"
+        cell.emojiLable.text = "😄"
+        cell.titleLable.text = "Делать 14 спринт"
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionHeader else {
+            return UICollectionReusableView()
+        }
+        
+        let header = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: "Header",
+            for: indexPath
+        ) as! TrackerCollectionViewHeader
+        
+        let title = "Мои трекеры"
+        header.headerConfigure(with: title)
+        return header
+    }
+}
+
+
+extension TrackerViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let spacing: CGFloat = 8
+        let width = (collectionView.bounds.width - spacing) / 2
+        return CGSize(width: width, height: 148)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 8
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.bounds.width, height: 35)
+    }
+    
 }
