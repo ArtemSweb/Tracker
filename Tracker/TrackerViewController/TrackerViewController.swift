@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  TrackerViewController.swift
 //  Tracker
 //
 //  Created by Артем Солодовников on 21.03.2025.
@@ -9,8 +9,7 @@ import UIKit
 
 class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
-    var categories: [TrackerCategory] = []
-    var completedTrackers: [TrackerRecord] = []
+    private let viewModel: TrackerViewModel
     
     // MARK: - UI компоненты
     private let addTrackingButton: UIButton = {
@@ -64,6 +63,10 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         return stackView
     }()
     
+    private var currentDate: Date {
+        Calendar.current.startOfDay(for: datePicker.date)
+    }
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
@@ -77,11 +80,22 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         return collectionView
     }()
     
+    //MARK: - init
+    init(viewModel: TrackerViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) не реализован")
+    }
+    
     //MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         addTrackingButton.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
@@ -92,6 +106,10 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     }
     
     //MARK: - вспомогательные функции
+    @objc private func dateChanged() {
+        collectionView.reloadData()
+    }
+    
     private func addViews() {
         [plagStackView, headerTitleLabel, searchBar, collectionView].forEach {
             view.addSubview($0)
@@ -131,31 +149,62 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     @objc
     private func addTrackingButtonTapped() {
-        let createTrackerSelection = CreateTrackerViewController()
-        let navigationController = UINavigationController(rootViewController: createTrackerSelection)
-        navigationController.modalPresentationStyle = .pageSheet
-        present(navigationController, animated: true)
+        let createTrackerSelection = CreateTypeTrackerViewController()
+        createTrackerSelection.onCreateTracker = { [weak self] newCategory in
+            guard let self = self else { return }
+            for tracker in newCategory.trackers {
+                self.viewModel.addTracker(tracker, toCategoryWithTitle: newCategory.name)
+            }
+            self.collectionView.reloadData()
+        }
+        toRepresentAsSheet(createTrackerSelection)
     }
 }
 
+//MARK: - Extensions
 extension TrackerViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        viewModel.numberOfSections(for: currentDate)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4 //переписать на реальные трекеры!
+        let total = viewModel.totalVisibleTrackers(for: currentDate)
+        
+        plagStackView.isHidden = total > 0
+        
+        return viewModel.numberOfItems(in: section, for: currentDate)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as? TrackerCollectionViewCell else {
             return UICollectionViewCell()
         }
-
-        cell.daysLable.text = "2 дня"
-        cell.emojiLable.text = "😄"
-        cell.titleLable.text = "Делать 14 спринт"
         
+        let tracker = viewModel.tracker(at: indexPath, for: currentDate)
+        let completedDays = viewModel.completedDays(for: tracker.id)
+        let isCompleted = viewModel.isTrackerCompleted(tracker.id, on: currentDate)
+        
+        cell.configure(with: tracker, completedDays: completedDays, isCompletedToday: isCompleted)
+        
+        cell.onPlusButtonTapped = { [weak self] in
+            guard let self = self else { return }
+            
+            let today = Calendar.current.startOfDay(for: Date())
+            guard self.currentDate <= today else { return }
+            
+            self.viewModel.toggleTrackerCompletion(trackerID: tracker.id, on: self.currentDate)
+            if let cell = self.collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell {
+                let updatedCompletedDays = self.viewModel.completedDays(for: tracker.id)
+                let updatedIsCompleted = self.viewModel.isTrackerCompleted(tracker.id, on: self.currentDate)
+                cell.updateState(isCompletedToday: updatedIsCompleted, completedDays: updatedCompletedDays)
+            }
+        }
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(_ collectionView: UICollectionView,
+                        viewForSupplementaryElementOfKind kind: String,
+                        at indexPath: IndexPath) -> UICollectionReusableView {
         guard kind == UICollectionView.elementKindSectionHeader else {
             return UICollectionReusableView()
         }
@@ -166,8 +215,8 @@ extension TrackerViewController: UICollectionViewDataSource {
             for: indexPath
         ) as! TrackerCollectionViewHeader
         
-        let title = "Мои трекеры"
-        header.headerConfigure(with: title)
+        let title = viewModel.sectionTitle(for: indexPath.section, date: currentDate)
+        header.configure(with: title)
         return header
     }
 }
@@ -197,13 +246,12 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 35)
+        return CGSize(width: collectionView.bounds.width, height: 30)
     }
-    
 }

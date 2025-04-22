@@ -8,10 +8,21 @@ import UIKit
 
 final class StatisticViewController: UIViewController {
     
+    
+    private let viewModel: StatisticViewModel
+    
+    init(viewModel: StatisticViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) не реализован")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .yellow
+        view.backgroundColor = .systemBackground
     }
     
 }

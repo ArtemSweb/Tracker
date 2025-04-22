@@ -1,14 +1,13 @@
 //
-//  TrackerCollectionViewHeader.swift
+//  SectionHeaderView.swift
 //  Tracker
 //
-//  Created by Артем Солодовников on 07.04.2025.
+//  Created by Артем Солодовников on 21.04.2025.
 //
 
 import UIKit
 
-final class TrackerCollectionViewHeader: UICollectionReusableView {
-    
+final class SectionHeaderView: UICollectionReusableView {
     private let titleLabel = UILabel()
     
     override init(frame: CGRect) {
