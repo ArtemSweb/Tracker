@@ -11,7 +11,7 @@ extension UIViewController {
     func toRepresentAsSheet(_ viewController: UIViewController) {
         let navigation = UINavigationController(rootViewController: viewController)
         navigation.modalPresentationStyle = .pageSheet
-        self.present(navigation, animated: true)
+        present(navigation, animated: true)
     }
     
     func dismissToRoot(animated: Bool = true) {

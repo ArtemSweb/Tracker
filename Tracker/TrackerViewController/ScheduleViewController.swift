@@ -44,7 +44,7 @@ final class ScheduleViewController: UIViewController {
         view.backgroundColor = .white
         
         setup()
-        addConsstraints()
+        addConstraints()
     }
     
     private func setup() {
@@ -62,7 +62,7 @@ final class ScheduleViewController: UIViewController {
         doneButton.addTarget(self, action: #selector(doneTapped), for: .touchUpInside)
     }
     
-    private func addConsstraints() {
+    private func addConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 26),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),

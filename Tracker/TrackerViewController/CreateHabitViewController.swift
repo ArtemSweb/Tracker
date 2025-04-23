@@ -1,5 +1,5 @@
 //
-//  CreateHabbitViewController.swift
+//  CreateHabitViewController.swift
 //  Tracker
 //
 //  Created by Артем Солодовников on 21.04.2025.
@@ -8,7 +8,7 @@
 import UIKit
 
 
-final class CreateHabbitViewController: UIViewController {
+final class CreateHabitViewController: UIViewController {
     
     var onCreateTracker: ((TrackerCategory) -> Void)?
     
@@ -211,7 +211,7 @@ final class CreateHabbitViewController: UIViewController {
             name: selectedCategory.name,
             trackers: selectedCategory.trackers + [newTracker]
         )
-
+        
         onCreateTracker?(newCategory)
         
         dismissToRoot()
@@ -226,9 +226,11 @@ final class CreateHabbitViewController: UIViewController {
         scheduleVC.selectedDays = Set(selectedSchedule)
         
         scheduleVC.onSchedulePicked = { [weak self] selected in
-            self?.selectedSchedule = selected
-            self?.updateScheduleUI()
-            self?.updateCreateButtonState()
+            guard let self else { return }
+            
+            self.selectedSchedule = selected
+            self.updateScheduleUI()
+            self.updateCreateButtonState()
         }
         toRepresentAsSheet(scheduleVC)
     }

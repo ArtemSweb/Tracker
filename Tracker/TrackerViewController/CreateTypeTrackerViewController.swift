@@ -21,7 +21,7 @@ final class CreateTypeTrackerViewController: UIViewController {
         return label
     }()
     
-    private let habbitButton: UIButton = {
+    private let habitButton: UIButton = {
         let button = UIButton()
         button.setTitle("Привычка", for: .normal)
         button.backgroundColor = .tBlack
@@ -46,12 +46,12 @@ final class CreateTypeTrackerViewController: UIViewController {
         
         addConstraints()
         
-        habbitButton.addTarget(self, action: #selector(habbitTapped), for: .touchUpInside)
+        habitButton.addTarget(self, action: #selector(habbitTapped), for: .touchUpInside)
         eventButton.addTarget(self, action: #selector(eventTapped), for: .touchUpInside)
     }
     
     private func addConstraints() {
-        [label, habbitButton, eventButton].forEach {
+        [label, habitButton, eventButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -60,21 +60,21 @@ final class CreateTypeTrackerViewController: UIViewController {
             label.topAnchor.constraint(equalTo: view.topAnchor, constant: 26),
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            habbitButton.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 295),
-            habbitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            habbitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            habbitButton.heightAnchor.constraint(equalToConstant: 60),
+            habitButton.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 295),
+            habitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            habitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            habitButton.heightAnchor.constraint(equalToConstant: 60),
             
-            eventButton.topAnchor.constraint(equalTo: habbitButton.bottomAnchor, constant: 16),
-            eventButton.leadingAnchor.constraint(equalTo: habbitButton.leadingAnchor),
-            eventButton.trailingAnchor.constraint(equalTo: habbitButton.trailingAnchor),
+            eventButton.topAnchor.constraint(equalTo: habitButton.bottomAnchor, constant: 16),
+            eventButton.leadingAnchor.constraint(equalTo: habitButton.leadingAnchor),
+            eventButton.trailingAnchor.constraint(equalTo: habitButton.trailingAnchor),
             eventButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     
     //MARK: - Вспомогательные методы
     @objc private func habbitTapped() {
-        let createHabitVC = CreateHabbitViewController()
+        let createHabitVC = CreateHabitViewController()
         createHabitVC.onCreateTracker = { [weak self] newCategory in
             self?.onCreateTracker?(newCategory)
             self?.dismissToRoot()

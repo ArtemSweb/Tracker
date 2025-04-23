@@ -11,11 +11,11 @@ final class Dependency {
     
     // MARK: - Инъекции
     func makeTrackerViewModel() -> TrackerViewModel {
-        return TrackerViewModel()
+        TrackerViewModel()
     }
     
     func makeStatisticViewModel() -> StatisticViewModel {
-        return StatisticViewModel()
+        StatisticViewModel()
     }
     
     func makeTrackerViewController() -> UIViewController {
@@ -32,11 +32,11 @@ final class Dependency {
     func makeTabBarController() -> UITabBarController {
         let trackerVC = makeTrackerViewController()
         let trackerNav = UINavigationController(rootViewController: trackerVC)
-        trackerNav.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(named: "tab_item_tracker"), tag: 0)
+        trackerNav.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(resource: .tabItemTracker), tag: 0)
         
         let statsVC = makeStatisticViewController()
         let statsNav = UINavigationController(rootViewController: statsVC)
-        statsNav.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(named: "tab_item_statistic"), tag: 1)
+        statsNav.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(resource: .tabItemStatistic), tag: 1)
         
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [trackerNav, statsNav]

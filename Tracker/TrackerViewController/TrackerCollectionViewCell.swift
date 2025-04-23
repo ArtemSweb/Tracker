@@ -57,7 +57,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     //MARK: - init
     override init(frame: CGRect) {
         super.init(frame: frame)
-
+        
         addViews()
         addConstraints()
         
@@ -124,17 +124,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         plusButton.setImage(icon, for: .normal)
         plusButton.tintColor = .white
         plusButton.backgroundColor = tracker.color.withAlphaComponent(isCompletedToday ? 0.3 : 1.0)
-    }
-    
-    func updateState(isCompletedToday: Bool, completedDays: Int) {
-        daysLabel.text = "\(completedDays) \(dayWord(for: completedDays))"
-        
-        let iconName = isCompletedToday ? "checkmark" : "plus"
-        let config = UIImage.SymbolConfiguration(pointSize: 12, weight: .medium)
-        let icon = UIImage(systemName: iconName, withConfiguration: config)
-        plusButton.setImage(icon, for: .normal)
-        plusButton.tintColor = .white
-        plusButton.backgroundColor = cardView.backgroundColor?.withAlphaComponent(isCompletedToday ? 0.3 : 1.0)
     }
     
     private func dayWord(for count: Int) -> String {

@@ -196,7 +196,7 @@ extension TrackerViewController: UICollectionViewDataSource {
             if let cell = self.collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell {
                 let updatedCompletedDays = self.viewModel.completedDays(for: tracker.id)
                 let updatedIsCompleted = self.viewModel.isTrackerCompleted(tracker.id, on: self.currentDate)
-                cell.updateState(isCompletedToday: updatedIsCompleted, completedDays: updatedCompletedDays)
+                cell.configure(with: tracker, completedDays: updatedCompletedDays, isCompletedToday: updatedIsCompleted)
             }
         }
         return cell
@@ -209,11 +209,13 @@ extension TrackerViewController: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
         
-        let header = collectionView.dequeueReusableSupplementaryView(
+        guard let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
             withReuseIdentifier: "Header",
             for: indexPath
-        ) as! TrackerCollectionViewHeader
+        ) as? TrackerCollectionViewHeader else {
+            fatalError("Не удалось загрузить Header с идентификатором 'Header'")
+        }
         
         let title = viewModel.sectionTitle(for: indexPath.section, date: currentDate)
         header.configure(with: title)
