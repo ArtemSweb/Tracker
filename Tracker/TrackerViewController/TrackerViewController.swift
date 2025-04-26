@@ -42,7 +42,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     }()
     
     private let plagImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "star_icon"))
+        let imageView = UIImageView(image: UIImage(resource: .starIcon))
         return imageView
     }()
     

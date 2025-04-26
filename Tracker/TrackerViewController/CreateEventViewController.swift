@@ -10,6 +10,7 @@ import UIKit
 final class CreateEventViewController: UIViewController {
     
     var onCreateTracker: ((TrackerCategory) -> Void)?
+    var viewModel: TrackerViewModel?
     
     private var selectedCategory: TrackerCategory? = TrackerCategory(name: "Домашний уют", trackers: []) {
         didSet {
@@ -17,6 +18,10 @@ final class CreateEventViewController: UIViewController {
             updateCreateButtonState()
         }
     }
+    
+    private let emojiAndColorPicker = EmojiAndColorPickerView()
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
     
     // MARK: - UI компоненты
     private let titleLabel: UILabel = {
@@ -115,39 +120,68 @@ final class CreateEventViewController: UIViewController {
         createButton.addTarget(self, action: #selector(createTapped), for: .touchUpInside)
         
         enableHideKeyboardOnTap()
+        
+        scrollView.keyboardDismissMode = .onDrag
+        emojiAndColorPicker.onChange = { [weak self] in
+            self?.updateCreateButtonState()
+        }
     }
     
     //MARK: - вспомогательные функции
     private func setup() {
-        [titleLabel, nameField, categoryButtonView, cancelButton, createButton].forEach {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsVerticalScrollIndicator = false
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        ])
+        
+        [titleLabel, nameField, categoryButtonView, emojiAndColorPicker, cancelButton, createButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview($0)
+            contentView.addSubview($0)
         }
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 26),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 26),
+            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
             nameField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 24),
-            nameField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            nameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            nameField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            nameField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             nameField.heightAnchor.constraint(equalToConstant: 75),
             
             categoryButtonView.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 24),
-            categoryButtonView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            categoryButtonView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            categoryButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            categoryButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             categoryButtonView.heightAnchor.constraint(equalToConstant: 75),
             
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            emojiAndColorPicker.topAnchor.constraint(equalTo: categoryButtonView.bottomAnchor, constant: 32),
+            emojiAndColorPicker.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            emojiAndColorPicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            
+            cancelButton.topAnchor.constraint(equalTo: emojiAndColorPicker.bottomAnchor),
+            cancelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            cancelButton.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -4),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
-            cancelButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -4),
             
-            createButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 4),
-            createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            createButton.bottomAnchor.constraint(equalTo: cancelButton.bottomAnchor),
-            createButton.heightAnchor.constraint(equalToConstant: 60)
-            
+            createButton.topAnchor.constraint(equalTo: emojiAndColorPicker.bottomAnchor),
+            createButton.leadingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 4),
+            createButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            createButton.heightAnchor.constraint(equalToConstant: 60),
+            createButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
         ])
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(categoryTapped))
@@ -167,6 +201,9 @@ final class CreateEventViewController: UIViewController {
     private func updateCreateButtonState() {
         let nameFilled = !(nameField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let categoryChosen = selectedCategory != nil
+        let emojiChosen = emojiAndColorPicker.selectedEmoji != nil
+        let colorChosen = emojiAndColorPicker.selectedColor != nil
+        
         createButton.isEnabled = nameFilled && categoryChosen
         createButton.backgroundColor = createButton.isEnabled ? .tBlack : .gray
     }
@@ -180,13 +217,18 @@ final class CreateEventViewController: UIViewController {
     }
     
     @objc private func createTapped() {
-        guard let selectedCategory = selectedCategory else { return }
+        guard
+            let name = nameField.text,
+            let color = emojiAndColorPicker.selectedColor,
+            let emoji = emojiAndColorPicker.selectedEmoji,
+            let selectedCategory = selectedCategory
+        else { return }
         
         let newTracker = Tracker(
             id: UUID(),
-            name: nameField.text ?? "",
-            color: .systemTeal,
-            emoji: "🎃",
+            name: name,
+            color: color,
+            emoji: emoji,
             schedule: []
         )
         
