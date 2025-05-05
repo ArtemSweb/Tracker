@@ -45,42 +45,7 @@ final class CreateEventViewController: UIViewController {
         return field
     }()
     
-    private let categoryButtonView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
-        view.layer.cornerRadius = 16
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        let titleButtonLabel = UILabel()
-        titleButtonLabel.text = "Категория"
-        titleButtonLabel.textColor = .tBlack
-        titleButtonLabel.font = .systemFont(ofSize: 17, weight: .medium)
-        
-        let subtitButtonleLabel = UILabel()
-        subtitButtonleLabel.text = ""
-        subtitButtonleLabel.textColor = .tGray
-        subtitButtonleLabel.font = .systemFont(ofSize: 17, weight: .medium)
-        
-        let chevronImageView = UIImageView(image: UIImage(resource: .arrowRight))
-        
-        [titleButtonLabel, subtitButtonleLabel, chevronImageView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview($0)
-        }
-        
-        NSLayoutConstraint.activate([
-            titleButtonLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            titleButtonLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 15),
-            
-            subtitButtonleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            subtitButtonleLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -14),
-            
-            chevronImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            chevronImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-        
-        return view
-    }()
+    private let categoryButtonView = OptionsRowView(title: "Категория")
     
     private let cancelButton: UIButton = {
         let button = UIButton(type: .system)
@@ -163,7 +128,7 @@ final class CreateEventViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
-        
+
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 26),
             titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -174,8 +139,8 @@ final class CreateEventViewController: UIViewController {
             nameField.heightAnchor.constraint(equalToConstant: 75),
             
             categoryButtonView.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 24),
-            categoryButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            categoryButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            categoryButtonView.leadingAnchor.constraint(equalTo: nameField.leadingAnchor),
+            categoryButtonView.trailingAnchor.constraint(equalTo: nameField.trailingAnchor),
             categoryButtonView.heightAnchor.constraint(equalToConstant: 75),
             
             emojiAndColorPicker.topAnchor.constraint(equalTo: categoryButtonView.bottomAnchor, constant: 32),
@@ -184,8 +149,8 @@ final class CreateEventViewController: UIViewController {
             
             cancelButton.topAnchor.constraint(equalTo: emojiAndColorPicker.bottomAnchor),
             cancelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            cancelButton.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -4),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
+            cancelButton.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -4),
             
             createButton.topAnchor.constraint(equalTo: emojiAndColorPicker.bottomAnchor),
             createButton.leadingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 4),
@@ -199,9 +164,7 @@ final class CreateEventViewController: UIViewController {
     }
     
     private func updateCategoryUI() {
-        if let subtitleLabel = categoryButtonView.subviews.compactMap({ $0 as? UILabel }).last {
-            subtitleLabel.text = selectedCategory?.name ?? ""
-        }
+        categoryButtonView.updateSubtitle(selectedCategory?.name ?? "")
     }
     
     @objc private func moveToCategoryView() {

@@ -69,7 +69,7 @@ final class ColorCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard let color = colorView.backgroundColor, borderLayer != nil else { return }
+        guard let _ = colorView.backgroundColor, borderLayer != nil else { return }
 
         let inset: CGFloat = -6
         let rect = colorView.frame.insetBy(dx: inset, dy: inset)
