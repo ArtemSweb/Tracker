@@ -61,7 +61,7 @@ final class CreateEventViewController: UIViewController {
         subtitButtonleLabel.textColor = .tGray
         subtitButtonleLabel.font = .systemFont(ofSize: 17, weight: .medium)
         
-        let chevronImageView = UIImageView(image: UIImage(named: "chevronForField"))
+        let chevronImageView = UIImageView(image: UIImage(resource: .arrowRight))
         
         [titleButtonLabel, subtitButtonleLabel, chevronImageView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false

@@ -15,7 +15,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     private let addTrackingButton: UIButton = {
         let button = UIButton()
         button.setTitle("", for: .normal)
-        button.setImage(UIImage(named: "plus")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(UIImage(resource: .plus).withRenderingMode(.alwaysOriginal), for: .normal)
         return button
     }()
     
