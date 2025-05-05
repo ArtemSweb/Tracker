@@ -6,12 +6,37 @@
 //
 
 import UIKit
+import CoreData
 
 final class Dependency {
     
+    //MARK: - CoreData
+    lazy var persistentContainer: NSPersistentContainer = {
+        DaysValueTransformer.register()
+        let container = NSPersistentContainer(name: "TrackerModel")
+        container.loadPersistentStores(completionHandler: { storeDescription, error in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        })
+        return container
+    }()
+    
+    var context: NSManagedObjectContext {
+        persistentContainer.viewContext
+    }
+    
+    lazy var trackerStore = TrackerStore(context: context)
+    lazy var trackerCategoryStore = TrackerCategoryStore(context: context)
+    lazy var trackerRecordStore = TrackerRecordStore(context: context)
+    
     // MARK: - Инъекции
     func makeTrackerViewModel() -> TrackerViewModel {
-        TrackerViewModel()
+        TrackerViewModel(
+            trackerStore: trackerStore,
+            categoryStore: trackerCategoryStore,
+            recordStore: trackerRecordStore
+        )
     }
     
     func makeStatisticViewModel() -> StatisticViewModel {

@@ -47,7 +47,7 @@ final class CreateHabitViewController: UIViewController {
         field.textColor = .tBlack
         field.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
         field.layer.cornerRadius = 16
-        field.setLeftPaddingPoints(16)
+        field.setPadding(left: 16)
         field.clearButtonMode = .whileEditing
         return field
     }()
@@ -188,14 +188,14 @@ final class CreateHabitViewController: UIViewController {
     }
     
     private func setupActions() {
-        let categoryTap = UITapGestureRecognizer(target: self, action: #selector(categoryTapped))
+        let categoryTap = UITapGestureRecognizer(target: self, action: #selector(moveToCategoryView))
         categoryButtonView.addGestureRecognizer(categoryTap)
         
         let scheduleTap = UITapGestureRecognizer(target: self, action: #selector(scheduleTapped))
         scheduleButtonView.addGestureRecognizer(scheduleTap)
         
         cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
-        createButton.addTarget(self, action: #selector(createTapped), for: .touchUpInside)
+        createButton.addTarget(self, action: #selector(createHabitTracker), for: .touchUpInside)
     }
     
     private func updateCategoryUI() {
@@ -209,13 +209,15 @@ final class CreateHabitViewController: UIViewController {
         let emojiChosen = emojiAndColorPicker.selectedEmoji != nil
         let colorChosen = emojiAndColorPicker.selectedColor != nil
         
-        createButton.isEnabled = nameFilled && categoryChosen && scheduleChosen
-        createButton.backgroundColor = createButton.isEnabled ? .tBlue : .gray
+        createButton.isEnabled = nameFilled && categoryChosen && scheduleChosen && emojiChosen && colorChosen
+        createButton.backgroundColor = createButton.isEnabled ? .tBlack : .gray
     }
     
     private func updateScheduleUI() {
         if selectedSchedule.isEmpty {
             scheduleButtonView.updateSubtitle(nil)
+        } else if selectedSchedule.count == DayOfWeek.allCases.count {
+            scheduleButtonView.updateSubtitle("Каждый день")
         } else {
             let days = selectedSchedule
                 .map { $0.shortDayName }
@@ -233,35 +235,35 @@ final class CreateHabitViewController: UIViewController {
         dismiss(animated: true)
     }
     
-    @objc private func createTapped() {
-        
+    @objc private func moveToCategoryView() {
+        print("Тут должен быть переход на экран выбора категорий")
+    }
+    
+    //MARK: - Создание трекера
+    @objc private func createHabitTracker() {
         guard
             let name = nameField.text,
             let color = emojiAndColorPicker.selectedColor,
             let emoji = emojiAndColorPicker.selectedEmoji,
             let selectedCategory = selectedCategory
+        else {
+            return
+        }
+        
+        guard
+            let coreDataCategory = viewModel?.categoryStore.createCategoryIfNeeded(title: selectedCategory.name)
         else { return }
         
-        let newTracker = Tracker(
-            id: UUID(),
-            name: nameField.text ?? "",
-            color: color,
+        viewModel?.createTracker(
+            name: name,
             emoji: emoji,
-            schedule: selectedSchedule
+            color: color,
+            schedule: selectedSchedule,
+            categoryTitle: selectedCategory.name,
+            coreDataCategory: coreDataCategory
         )
-        
-        let newCategory = TrackerCategory(
-            name: selectedCategory.name,
-            trackers: selectedCategory.trackers + [newTracker]
-        )
-        
-        onCreateTracker?(newCategory)
         
         dismissToRoot()
-    }
-    
-    @objc private func categoryTapped() {
-        print("Тут должен быть переход на экран выбора категорий")
     }
     
     @objc private func scheduleTapped() {
@@ -269,16 +271,15 @@ final class CreateHabitViewController: UIViewController {
         scheduleVC.selectedDays = Set(selectedSchedule)
         
         scheduleVC.onSchedulePicked = { [weak self] selected in
-            guard let self else { return }
-            
-            self.selectedSchedule = selected
-            self.updateScheduleUI()
-            self.updateCreateButtonState()
+            self?.selectedSchedule = selected
+            self?.updateScheduleUI()
+            self?.updateCreateButtonState()
         }
         toRepresentAsSheet(scheduleVC)
     }
 }
 
+//MARK: - Таблица Категория + Расписание
 final class CreateOptionRowView: UIView {
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()

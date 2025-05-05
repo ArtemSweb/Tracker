@@ -101,6 +101,10 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
+        viewModel.loadTrackers()
+        viewModel.trackerStore.delegate = self
+        
+        
         addViews()
         addConstraints()
     }
@@ -149,13 +153,12 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     @objc
     private func addTrackingButtonTapped() {
-        let createTrackerSelection = CreateTypeTrackerViewController()
+        let createTrackerSelection = CreateTypeTrackerViewController(viewModel: self.viewModel)
         createTrackerSelection.onCreateTracker = { [weak self] newCategory in
             guard let self = self else { return }
             for tracker in newCategory.trackers {
                 self.viewModel.addTracker(tracker, toCategoryWithTitle: newCategory.name)
             }
-            self.collectionView.reloadData()
         }
         toRepresentAsSheet(createTrackerSelection)
     }
@@ -255,5 +258,13 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 30)
+    }
+    
+}
+
+extension TrackerViewController: TrackerStoreDelegate {
+    func didUpdateTrackers() {
+        viewModel.loadTrackers()
+        collectionView.reloadData()
     }
 }

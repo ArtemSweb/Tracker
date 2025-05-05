@@ -40,7 +40,7 @@ final class CreateEventViewController: UIViewController {
         field.font = UIFont.systemFont(ofSize: 17)
         field.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
         field.layer.cornerRadius = 16
-        field.setLeftPaddingPoints(16)
+        field.setPadding(left: 16)
         field.clearButtonMode = .whileEditing
         return field
     }()
@@ -117,7 +117,7 @@ final class CreateEventViewController: UIViewController {
         
         nameField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
-        createButton.addTarget(self, action: #selector(createTapped), for: .touchUpInside)
+        createButton.addTarget(self, action: #selector(createEventTracker), for: .touchUpInside)
         
         enableHideKeyboardOnTap()
         
@@ -125,6 +125,16 @@ final class CreateEventViewController: UIViewController {
         emojiAndColorPicker.onChange = { [weak self] in
             self?.updateCreateButtonState()
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
     //MARK: - вспомогательные функции
@@ -184,7 +194,7 @@ final class CreateEventViewController: UIViewController {
             createButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
         ])
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(categoryTapped))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(moveToCategoryView))
         categoryButtonView.addGestureRecognizer(tapGesture)
     }
     
@@ -194,7 +204,7 @@ final class CreateEventViewController: UIViewController {
         }
     }
     
-    @objc private func categoryTapped() {
+    @objc private func moveToCategoryView() {
         print("Выбор категории")
     }
     
@@ -204,7 +214,7 @@ final class CreateEventViewController: UIViewController {
         let emojiChosen = emojiAndColorPicker.selectedEmoji != nil
         let colorChosen = emojiAndColorPicker.selectedColor != nil
         
-        createButton.isEnabled = nameFilled && categoryChosen
+        createButton.isEnabled = nameFilled && categoryChosen && emojiChosen && colorChosen
         createButton.backgroundColor = createButton.isEnabled ? .tBlack : .gray
     }
     
@@ -216,36 +226,29 @@ final class CreateEventViewController: UIViewController {
         dismiss(animated: true)
     }
     
-    @objc private func createTapped() {
+    //MARK: - Создание трекера
+    @objc private func createEventTracker() {
         guard
             let name = nameField.text,
             let color = emojiAndColorPicker.selectedColor,
             let emoji = emojiAndColorPicker.selectedEmoji,
             let selectedCategory = selectedCategory
+        else {
+            return
+        }
+        
+        guard
+            let coreDataCategory = viewModel?.categoryStore.createCategoryIfNeeded(title: selectedCategory.name)
         else { return }
         
-        let newTracker = Tracker(
-            id: UUID(),
+        viewModel?.createTracker(
             name: name,
-            color: color,
             emoji: emoji,
-            schedule: []
+            color: color,
+            schedule: [],
+            categoryTitle: selectedCategory.name,
+            coreDataCategory: coreDataCategory
         )
-        
-        let newCategory = TrackerCategory(
-            name: selectedCategory.name,
-            trackers: selectedCategory.trackers + [newTracker]
-        )
-        
-        onCreateTracker?(newCategory)
         dismissToRoot()
-    }
-}
-
-extension UITextField {
-    func setLeftPaddingPoints(_ amount: CGFloat) {
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: amount, height: self.frame.height))
-        self.leftView = paddingView
-        self.leftViewMode = .always
     }
 }
