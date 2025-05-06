@@ -11,6 +11,7 @@ import UIKit
 final class CreateHabitViewController: UIViewController {
     
     var onCreateTracker: ((TrackerCategory) -> Void)?
+    var viewModel: TrackerViewModel?
     
     private var selectedCategory: TrackerCategory? = TrackerCategory(name: "Домашний уют", trackers: []) {
         didSet {
@@ -25,6 +26,10 @@ final class CreateHabitViewController: UIViewController {
             updateCreateButtonState()
         }
     }
+    
+    private let emojiAndColorPicker = EmojiAndColorPickerView()
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
     
     // MARK: - UI компоненты
     private let titleLabel: UILabel = {
@@ -42,7 +47,7 @@ final class CreateHabitViewController: UIViewController {
         field.textColor = .tBlack
         field.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
         field.layer.cornerRadius = 16
-        field.setLeftPaddingPoints(16)
+        field.setPadding(left: 16)
         field.clearButtonMode = .whileEditing
         return field
     }()
@@ -55,8 +60,8 @@ final class CreateHabitViewController: UIViewController {
         return view
     }()
     
-    private let categoryButtonView = CreateOptionRowView(title: "Категория")
-    private let scheduleButtonView = CreateOptionRowView(title: "Расписание")
+    private let categoryButtonView = OptionsRowView(title: "Категория")
+    private let scheduleButtonView = OptionsRowView(title: "Расписание")
     
     private let dividerView: UIView = {
         let view = UIView()
@@ -98,13 +103,37 @@ final class CreateHabitViewController: UIViewController {
         updateCreateButtonState()
         nameField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         enableHideKeyboardOnTap()
+        scrollView.keyboardDismissMode = .onDrag
+        emojiAndColorPicker.onChange = { [weak self] in
+            self?.updateCreateButtonState()
+        }
     }
     
     //MARK: - вспомогательные функции
     private func setup() {
-        [titleLabel, nameField, optionContainerView, cancelButton, createButton].forEach {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsVerticalScrollIndicator = false
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        ])
+        
+        [titleLabel, nameField, optionContainerView, emojiAndColorPicker, cancelButton, createButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview($0)
+            contentView.addSubview($0)
         }
         
         [categoryButtonView, dividerView, scheduleButtonView].forEach {
@@ -113,12 +142,12 @@ final class CreateHabitViewController: UIViewController {
         }
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 26),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 26),
+            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             
             nameField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 24),
-            nameField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            nameField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            nameField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            nameField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             nameField.heightAnchor.constraint(equalToConstant: 75),
             
             optionContainerView.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 24),
@@ -141,27 +170,32 @@ final class CreateHabitViewController: UIViewController {
             scheduleButtonView.heightAnchor.constraint(equalToConstant: 75),
             scheduleButtonView.bottomAnchor.constraint(equalTo: optionContainerView.bottomAnchor),
             
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            cancelButton.heightAnchor.constraint(equalToConstant: 60),
-            cancelButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -4),
+            emojiAndColorPicker.topAnchor.constraint(equalTo: optionContainerView.bottomAnchor, constant: 32),
+            emojiAndColorPicker.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            emojiAndColorPicker.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
-            createButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 4),
-            createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            createButton.bottomAnchor.constraint(equalTo: cancelButton.bottomAnchor),
-            createButton.heightAnchor.constraint(equalToConstant: 60)
+            cancelButton.topAnchor.constraint(equalTo: emojiAndColorPicker.bottomAnchor),
+            cancelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            cancelButton.heightAnchor.constraint(equalToConstant: 60),
+            cancelButton.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -4),
+            
+            createButton.topAnchor.constraint(equalTo: emojiAndColorPicker.bottomAnchor),
+            createButton.leadingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 4),
+            createButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            createButton.heightAnchor.constraint(equalToConstant: 60),
+            createButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
         ])
     }
     
     private func setupActions() {
-        let categoryTap = UITapGestureRecognizer(target: self, action: #selector(categoryTapped))
+        let categoryTap = UITapGestureRecognizer(target: self, action: #selector(moveToCategoryView))
         categoryButtonView.addGestureRecognizer(categoryTap)
         
         let scheduleTap = UITapGestureRecognizer(target: self, action: #selector(scheduleTapped))
         scheduleButtonView.addGestureRecognizer(scheduleTap)
         
         cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
-        createButton.addTarget(self, action: #selector(createTapped), for: .touchUpInside)
+        createButton.addTarget(self, action: #selector(createHabitTracker), for: .touchUpInside)
     }
     
     private func updateCategoryUI() {
@@ -172,13 +206,18 @@ final class CreateHabitViewController: UIViewController {
         let nameFilled = !(nameField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let categoryChosen = selectedCategory != nil
         let scheduleChosen = !selectedSchedule.isEmpty
-        createButton.isEnabled = nameFilled && categoryChosen && scheduleChosen
-        createButton.backgroundColor = createButton.isEnabled ? .tBlue : .gray
+        let emojiChosen = emojiAndColorPicker.selectedEmoji != nil
+        let colorChosen = emojiAndColorPicker.selectedColor != nil
+        
+        createButton.isEnabled = nameFilled && categoryChosen && scheduleChosen && emojiChosen && colorChosen
+        createButton.backgroundColor = createButton.isEnabled ? .tBlack : .gray
     }
     
     private func updateScheduleUI() {
         if selectedSchedule.isEmpty {
             scheduleButtonView.updateSubtitle(nil)
+        } else if selectedSchedule.count == DayOfWeek.allCases.count {
+            scheduleButtonView.updateSubtitle("Каждый день")
         } else {
             let days = selectedSchedule
                 .map { $0.shortDayName }
@@ -196,29 +235,35 @@ final class CreateHabitViewController: UIViewController {
         dismiss(animated: true)
     }
     
-    @objc private func createTapped() {
-        guard let selectedCategory = selectedCategory else { return }
-        
-        let newTracker = Tracker(
-            id: UUID(),
-            name: nameField.text ?? "",
-            color: .systemOrange,
-            emoji: "🏡",
-            schedule: selectedSchedule
-        )
-        
-        let newCategory = TrackerCategory(
-            name: selectedCategory.name,
-            trackers: selectedCategory.trackers + [newTracker]
-        )
-        
-        onCreateTracker?(newCategory)
-        
-        dismissToRoot()
+    @objc private func moveToCategoryView() {
+        print("Тут должен быть переход на экран выбора категорий")
     }
     
-    @objc private func categoryTapped() {
-        print("Тут должен быть переход на экран выбора категорий")
+    //MARK: - Создание трекера
+    @objc private func createHabitTracker() {
+        guard
+            let name = nameField.text,
+            let color = emojiAndColorPicker.selectedColor,
+            let emoji = emojiAndColorPicker.selectedEmoji,
+            let selectedCategory = selectedCategory
+        else {
+            return
+        }
+        
+        guard
+            let coreDataCategory = viewModel?.categoryStore.createCategoryIfNeeded(title: selectedCategory.name)
+        else { return }
+        
+        viewModel?.createTracker(
+            name: name,
+            emoji: emoji,
+            color: color,
+            schedule: selectedSchedule,
+            categoryTitle: selectedCategory.name,
+            coreDataCategory: coreDataCategory
+        )
+        
+        dismissToRoot()
     }
     
     @objc private func scheduleTapped() {
@@ -226,86 +271,10 @@ final class CreateHabitViewController: UIViewController {
         scheduleVC.selectedDays = Set(selectedSchedule)
         
         scheduleVC.onSchedulePicked = { [weak self] selected in
-            guard let self else { return }
-            
-            self.selectedSchedule = selected
-            self.updateScheduleUI()
-            self.updateCreateButtonState()
+            self?.selectedSchedule = selected
+            self?.updateScheduleUI()
+            self?.updateCreateButtonState()
         }
         toRepresentAsSheet(scheduleVC)
     }
 }
-
-final class CreateOptionRowView: UIView {
-    private let titleLabel = UILabel()
-    private let subtitleLabel = UILabel()
-    private let arrowIconView = UIImageView(image: UIImage(named: "arrow_right"))
-    
-    private var centerYConstraint: NSLayoutConstraint!
-    private var topTitleConstraint: NSLayoutConstraint!
-    private var bottomSubtitleConstraint: NSLayoutConstraint!
-    
-    init(title: String) {
-        super.init(frame: .zero)
-        backgroundColor = .clear
-        
-        titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 17, weight: .medium)
-        titleLabel.textColor = .tBlack
-        
-        subtitleLabel.font = .systemFont(ofSize: 17, weight: .medium)
-        subtitleLabel.textColor = .tGray
-        
-        [titleLabel, subtitleLabel, arrowIconView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            addSubview($0)
-        }
-        
-        NSLayoutConstraint.activate([
-            arrowIconView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            arrowIconView.centerYAnchor.constraint(equalTo: centerYAnchor)
-        ])
-        
-        topTitleConstraint = titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 15)
-        centerYConstraint = titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
-        
-        bottomSubtitleConstraint = subtitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -14)
-        
-        NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            subtitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
-        ])
-        
-        updateLayout(animated: false)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) не реализован")
-    }
-    
-    func updateSubtitle(_ text: String?) {
-        subtitleLabel.text = text
-        updateLayout(animated: true)
-    }
-    
-    private func updateLayout(animated: Bool) {
-        [topTitleConstraint, centerYConstraint, bottomSubtitleConstraint].forEach { $0.isActive = false }
-        
-        if let text = subtitleLabel.text, !text.isEmpty {
-            topTitleConstraint.isActive = true
-            bottomSubtitleConstraint.isActive = true
-        } else {
-            centerYConstraint.isActive = true
-        }
-        
-        if animated {
-            UIView.animate(withDuration: 0.2) {
-                self.layoutIfNeeded()
-            }
-        } else {
-            layoutIfNeeded()
-        }
-    }
-}
-
-

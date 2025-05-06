@@ -10,6 +10,16 @@ import UIKit
 final class CreateTypeTrackerViewController: UIViewController {
     
     var onCreateTracker: ((TrackerCategory) -> Void)?
+    private let viewModel: TrackerViewModel
+    
+    init(viewModel: TrackerViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) не реализован")
+    }
     
     // MARK: - UI компоненты
     private let label: UILabel = {
@@ -75,6 +85,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     //MARK: - Вспомогательные методы
     @objc private func habbitTapped() {
         let createHabitVC = CreateHabitViewController()
+        createHabitVC.viewModel = viewModel
         createHabitVC.onCreateTracker = { [weak self] newCategory in
             self?.onCreateTracker?(newCategory)
             self?.dismissToRoot()
@@ -84,6 +95,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     
     @objc private func eventTapped() {
         let createEventVC = CreateEventViewController()
+        createEventVC.viewModel = viewModel
         createEventVC.onCreateTracker = { [weak self] newCategory in
             self?.onCreateTracker?(newCategory)
             self?.dismissToRoot()
