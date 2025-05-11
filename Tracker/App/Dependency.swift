@@ -45,7 +45,8 @@ final class Dependency {
     
     func makeTrackerViewController() -> UIViewController {
         let viewModel = makeTrackerViewModel()
-        return TrackerViewController(viewModel: viewModel)
+        let categoryViewModel = TrackerCategoryViewModel(categoryStore: trackerCategoryStore)
+        return TrackerViewController(viewModel: viewModel, categoryViewModel: categoryViewModel)
     }
     
     func makeStatisticViewController() -> UIViewController {

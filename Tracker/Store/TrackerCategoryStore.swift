@@ -9,6 +9,8 @@ import CoreData
 
 final class TrackerCategoryStore {
     private let context: NSManagedObjectContext
+    
+    var onCategoriesChanged: (([TrackerCategoryCoreData]) -> Void)?
 
     init(context: NSManagedObjectContext) {
         self.context = context
