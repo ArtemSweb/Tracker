@@ -8,8 +8,8 @@
 import UIKit
 
 final class CategoryCell: UITableViewCell {
-    private let titleLabel = UILabel()
-    private let separator = UIView()
+    lazy private var titleLabel = UILabel()
+    lazy private var separator = UIView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -21,7 +21,7 @@ final class CategoryCell: UITableViewCell {
     }
     
     private func setupUI() {
-        titleLabel.font = UIFont(name: "SFPro-Regular", size: 17)
+        titleLabel.font = .systemFont(ofSize: 17, weight: .regular)
         titleLabel.textColor = .tBlack
         
         separator.backgroundColor = .tGray

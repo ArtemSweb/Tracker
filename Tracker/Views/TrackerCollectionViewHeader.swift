@@ -9,7 +9,7 @@ import UIKit
 
 final class TrackerCollectionViewHeader: UICollectionReusableView {
     
-    private let titleLabel = UILabel()
+    lazy private var titleLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

@@ -8,9 +8,9 @@
 import UIKit
 
 final class OptionsRowView: UIView {
-    private let titleLabel = UILabel()
-    private let subtitleLabel = UILabel()
-    private let arrowIconView = UIImageView(image: UIImage(resource: .arrowRight))
+    lazy private var titleLabel = UILabel()
+    lazy private var subtitleLabel = UILabel()
+    lazy private var arrowIconView = UIImageView(image: UIImage(resource: .arrowRight))
     
     private var centerYConstraint: NSLayoutConstraint!
     private var topTitleConstraint: NSLayoutConstraint!

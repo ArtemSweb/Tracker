@@ -10,9 +10,9 @@ import UIKit
 
 final class ScheduleCell: UITableViewCell {
     
-    private let dayLabel = UILabel()
-    private let toggle = UISwitch()
-    private let separator = UIView()
+    lazy private var dayLabel = UILabel()
+    lazy private var toggle = UISwitch()
+    lazy private var separator = UIView()
     
     private var toggleHandler: ((Bool) -> Void)?
     
