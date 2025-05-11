@@ -12,8 +12,9 @@ final class CreateHabitViewController: UIViewController {
     
     var onCreateTracker: ((TrackerCategory) -> Void)?
     var viewModel: TrackerViewModel?
+    var categoryViewModel: TrackerCategoryViewModel?
     
-    private var selectedCategory: TrackerCategory? = TrackerCategory(name: "Домашний уют", trackers: []) {
+    private var selectedCategory: TrackerCategory? {
         didSet {
             updateCategoryUI()
             updateCreateButtonState()
@@ -235,8 +236,16 @@ final class CreateHabitViewController: UIViewController {
         dismiss(animated: true)
     }
     
+    //Выбор категории
     @objc private func moveToCategoryView() {
-        print("Тут должен быть переход на экран выбора категорий")
+        guard let viewModel = categoryViewModel else { return }
+        let categoryVC = CategoryViewController(viewModel: viewModel)
+        categoryVC.onCategorySelected = { [weak self] selectedCategory in
+            self?.selectedCategory = TrackerCategory(name: selectedCategory.title ?? "Без названия", trackers: [])
+            self?.updateCategoryUI()
+            self?.updateCreateButtonState()
+        }
+        toRepresentAsSheet(categoryVC)
     }
     
     //MARK: - Создание трекера

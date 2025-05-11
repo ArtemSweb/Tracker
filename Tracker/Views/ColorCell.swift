@@ -11,7 +11,7 @@ final class ColorCell: UICollectionViewCell {
     
     static let reuseIdentifier = "ColorCell"
     
-    private let colorView = UIView()
+    lazy private var colorView = UIView()
     private var borderLayer: CAShapeLayer?
     
     override init(frame: CGRect) {

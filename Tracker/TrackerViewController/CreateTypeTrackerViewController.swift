@@ -11,9 +11,11 @@ final class CreateTypeTrackerViewController: UIViewController {
     
     var onCreateTracker: ((TrackerCategory) -> Void)?
     private let viewModel: TrackerViewModel
+    private let categoryViewModel: TrackerCategoryViewModel
     
-    init(viewModel: TrackerViewModel) {
+    init(viewModel: TrackerViewModel, categoryViewModel: TrackerCategoryViewModel) {
         self.viewModel = viewModel
+        self.categoryViewModel = categoryViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -86,6 +88,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     @objc private func habbitTapped() {
         let createHabitVC = CreateHabitViewController()
         createHabitVC.viewModel = viewModel
+        createHabitVC.categoryViewModel = categoryViewModel
         createHabitVC.onCreateTracker = { [weak self] newCategory in
             self?.onCreateTracker?(newCategory)
             self?.dismissToRoot()
@@ -96,6 +99,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     @objc private func eventTapped() {
         let createEventVC = CreateEventViewController()
         createEventVC.viewModel = viewModel
+        createEventVC.categoryViewModel = categoryViewModel
         createEventVC.onCreateTracker = { [weak self] newCategory in
             self?.onCreateTracker?(newCategory)
             self?.dismissToRoot()

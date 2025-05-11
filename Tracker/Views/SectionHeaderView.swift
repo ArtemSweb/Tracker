@@ -8,7 +8,7 @@
 import UIKit
 
 final class SectionHeaderView: UICollectionReusableView {
-    private let titleLabel = UILabel()
+    lazy private var titleLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

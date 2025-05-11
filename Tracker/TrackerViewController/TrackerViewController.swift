@@ -10,6 +10,7 @@ import UIKit
 class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     private let viewModel: TrackerViewModel
+    private let categoryViewModel: TrackerCategoryViewModel
     
     // MARK: - UI компоненты
     private let addTrackingButton: UIButton = {
@@ -81,8 +82,9 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     }()
     
     //MARK: - init
-    init(viewModel: TrackerViewModel) {
+    init(viewModel: TrackerViewModel, categoryViewModel: TrackerCategoryViewModel) {
         self.viewModel = viewModel
+        self.categoryViewModel = categoryViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -103,7 +105,6 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         
         viewModel.loadTrackers()
         viewModel.trackerStore.delegate = self
-        
         
         addViews()
         addConstraints()
@@ -153,7 +154,10 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     @objc
     private func addTrackingButtonTapped() {
-        let createTrackerSelection = CreateTypeTrackerViewController(viewModel: self.viewModel)
+        let createTrackerSelection = CreateTypeTrackerViewController(
+            viewModel: self.viewModel,
+            categoryViewModel: self.categoryViewModel)
+        
         createTrackerSelection.onCreateTracker = { [weak self] newCategory in
             guard let self = self else { return }
             for tracker in newCategory.trackers {

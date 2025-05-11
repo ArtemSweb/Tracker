@@ -9,7 +9,7 @@ import UIKit
 
 final class TrackerCollectionViewHeader: UICollectionReusableView {
     
-    private let titleLabel = UILabel()
+    lazy private var titleLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -19,7 +19,8 @@ final class TrackerCollectionViewHeader: UICollectionReusableView {
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+            titleLabel.heightAnchor.constraint(equalToConstant: 21)
         ])
     }
     

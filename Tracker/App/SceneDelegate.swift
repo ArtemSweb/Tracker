@@ -15,8 +15,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
         let tabBarController = Dependency().makeTabBarController()
         
+        let onboardingVC = OnboardingViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        onboardingVC.onFinished = {
+            self.window?.rootViewController = tabBarController
+        }
+        
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = tabBarController
+        window?.rootViewController = onboardingVC
         window?.makeKeyAndVisible()
     }
 }
