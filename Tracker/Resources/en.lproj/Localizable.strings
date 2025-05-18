@@ -1,0 +1,61 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Артем Солодовников on 18.05.2025.
+  
+*/
+
+// MARK: - Onboarding
+"onboardingTitleBlue" = "Track only what you want";
+"onboardingButton" = "Now that’s technology!";
+"onboardingTitleRed" = "Even if it’s not liters of water and yoga";
+
+// MARK: - Main Screen
+"trackers" = "Trackers";
+"search" = "Search";
+"baseScreenPrompt" = "What shall we track?";
+"statistic" = "Statistics";
+
+// MARK: - Tracker Creation
+"newEventButton" = "New irregular event";
+"trackerNamePlaceholder" = "Enter tracker name";
+"cancelButton" = "Cancel";
+"trackerNameMissing" = "No name";
+"newHabitButton" = "New habit";
+"createTrackerTitle" = "Create tracker";
+"habit" = "Habit";
+"event" = "Irregular event";
+"doneButton" = "Done";
+
+// MARK: - Categories
+"categoryTitleMissing" = "No category";
+"categoryLabel" = "Category";
+"categoryListDescription" = "Habits and events can be\ngrouped by meaning";
+"categoryAddButton" = "Add category";
+"categoryCreateTitle" = "New category";
+"categoryCreatePlaceholder" = "Enter category name";
+"categoryCreateButton" = "Create";
+
+// MARK: - Weekdays and Schedule
+"mondayFull" = "Monday";
+"tuesdayFull" = "Tuesday";
+"wednesdayFull" = "Wednesday";
+"thursdayFull" = "Thursday";
+"fridayFull" = "Friday";
+"saturdayFull" = "Saturday";
+"sundayFull" = "Sunday";
+
+"mondayShort" = "Mon";
+"tuesdayShort" = "Tue";
+"wednesdayShort" = "Wed";
+"thursdayShort" = "Thu";
+"fridayShort" = "Fri";
+"saturdayShort" = "Sat";
+"sundayShort" = "Sun";
+
+"schedule" = "Schedule";
+"everyDay" = "Every day";
+
+// MARK: - Colors
+"color" = "Color";

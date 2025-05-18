@@ -1,0 +1,61 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Артем Солодовников on 18.05.2025.
+  
+*/
+
+// MARK: - Onboarding
+"onboardingTitleBlue" = "Отслеживайте только то, что хотите";
+"onboardingButton" = "Вот это технологии!";
+"onboardingTitleRed" = "Даже если это не литры воды и йога";
+
+// MARK: - Главный экран
+"trackers" = "Трекеры";
+"search" = "Поиск";
+"baseScreenPrompt" = "Что будем отслеживать?";
+"statistic" = "Статистика";
+
+// MARK: - Создание трекеров
+"newEventButton" = "Новое нерегулярное событие";
+"trackerNamePlaceholder" = "Введите название трекера";
+"cancelButton" = "Отменить";
+"trackerNameMissing" = "Без названия";
+"newHabitButton" = "Новая привычка";
+"createTrackerTitle" = "Создание трекера";
+"habit" = "Привычка";
+"event" = "Нерегулярное событие";
+"doneButton" = "Готово";
+
+// MARK: - Категориями
+"categoryTitleMissing" = "Без категории";
+"categoryLabel" = "Категория";
+"categoryListDescription" = "Привычки и события можно\nобъединить по смыслу";
+"categoryAddButton" = "Добавить категорию";
+"categoryCreateTitle" = "Новая категория";
+"categoryCreatePlaceholder" = "Введите название категории";
+"categoryCreateButton" = "Создать";
+
+// MARK: - Дни недели и расписание
+"mondayFull" = "Понедельник";
+"tuesdayFull" = "Вторник";
+"wednesdayFull" = "Среда";
+"thursdayFull" = "Четверг";
+"fridayFull" = "Пятница";
+"saturdayFull" = "Суббота";
+"sundayFull" = "Воскресенье";
+
+"mondayShort" = "Пн";
+"tuesdayShort" = "Вт";
+"wednesdayShort" = "Ср";
+"thursdayShort" = "Чт";
+"fridayShort" = "Пт";
+"saturdayShort" = "Сб";
+"sundayShort" = "Вс";
+
+"schedule" = "Расписание";
+"everyDay" = "Каждый день";
+
+// MARK: - Цвета
+"color" = "Цвет";
