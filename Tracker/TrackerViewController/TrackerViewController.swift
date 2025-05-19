@@ -29,7 +29,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     private let headerTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = L10n.trackers
         label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         label.textColor = .tBlack
         return label
@@ -37,7 +37,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
-        searchBar.placeholder = "Поиск"
+        searchBar.placeholder = L10n.search
         searchBar.searchBarStyle = .minimal
         return searchBar
     }()
@@ -49,7 +49,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     private let plagLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = L10n.baseScreenPrompt
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .tBlack
         return label

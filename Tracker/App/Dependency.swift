@@ -58,11 +58,11 @@ final class Dependency {
     func makeTabBarController() -> UITabBarController {
         let trackerVC = makeTrackerViewController()
         let trackerNav = UINavigationController(rootViewController: trackerVC)
-        trackerNav.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(resource: .tabItemTracker), tag: 0)
+        trackerNav.tabBarItem = UITabBarItem(title: L10n.trackers, image: UIImage(resource: .tabItemTracker), tag: 0)
         
         let statsVC = makeStatisticViewController()
         let statsNav = UINavigationController(rootViewController: statsVC)
-        statsNav.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(resource: .tabItemStatistic), tag: 1)
+        statsNav.tabBarItem = UITabBarItem(title: L10n.statistic, image: UIImage(resource: .tabItemStatistic), tag: 1)
         
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [trackerNav, statsNav]

@@ -25,7 +25,7 @@ final class OnboardingViewController: UIPageViewController {
         onboardingLabel.numberOfLines = 0
         
         let onboardingButton = UIButton(type: .system)
-        onboardingButton.setTitle("Вот это технологии!", for: .normal)
+        onboardingButton.setTitle(L10n.onboardingButton, for: .normal)
         onboardingButton.backgroundColor = .tBlack
         onboardingButton.setTitleColor(.white, for: .normal)
         onboardingButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
@@ -61,11 +61,11 @@ final class OnboardingViewController: UIPageViewController {
     lazy var pages: [UIViewController] = {
         let blueScreen = createPageViewController(
             image: UIImage(resource: .blueOnboardingBackground),
-            text: "Отслеживайте только то, что хотите")
+            text: L10n.onboardingTitleBlue)
         
         let redScreen = createPageViewController(
             image: UIImage(resource: .redOnboardingBackground),
-            text: "Даже если это не литры воды и йога")
+            text: L10n.onboardingTitleRed)
         
         return [blueScreen, redScreen]
     }()

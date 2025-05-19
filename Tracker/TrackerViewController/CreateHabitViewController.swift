@@ -35,7 +35,7 @@ final class CreateHabitViewController: UIViewController {
     // MARK: - UI компоненты
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Новая привычка"
+        label.text = L10n.newHabitButton
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .tBlack
         label.textAlignment = .center
@@ -44,7 +44,7 @@ final class CreateHabitViewController: UIViewController {
     
     private let nameField: UITextField = {
         let field = UITextField()
-        field.placeholder = "Введите название трекера"
+        field.placeholder = L10n.trackerNamePlaceholder
         field.textColor = .tBlack
         field.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
         field.layer.cornerRadius = 16
@@ -61,8 +61,8 @@ final class CreateHabitViewController: UIViewController {
         return view
     }()
     
-    private let categoryButtonView = OptionsRowView(title: "Категория")
-    private let scheduleButtonView = OptionsRowView(title: "Расписание")
+    private let categoryButtonView = OptionsRowView(title: L10n.categoryLabel)
+    private let scheduleButtonView = OptionsRowView(title: L10n.schedule)
     
     private let dividerView: UIView = {
         let view = UIView()
@@ -72,7 +72,7 @@ final class CreateHabitViewController: UIViewController {
     
     private let cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(L10n.cancelButton, for: .normal)
         button.setTitleColor(.tred, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.borderWidth = 1
@@ -84,7 +84,7 @@ final class CreateHabitViewController: UIViewController {
     
     private let createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(L10n.categoryCreateButton, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -218,7 +218,7 @@ final class CreateHabitViewController: UIViewController {
         if selectedSchedule.isEmpty {
             scheduleButtonView.updateSubtitle(nil)
         } else if selectedSchedule.count == DayOfWeek.allCases.count {
-            scheduleButtonView.updateSubtitle("Каждый день")
+            scheduleButtonView.updateSubtitle(L10n.everyDay)
         } else {
             let days = selectedSchedule
                 .map { $0.shortDayName }
@@ -241,7 +241,7 @@ final class CreateHabitViewController: UIViewController {
         guard let viewModel = categoryViewModel else { return }
         let categoryVC = CategoryViewController(viewModel: viewModel)
         categoryVC.onCategorySelected = { [weak self] selectedCategory in
-            self?.selectedCategory = TrackerCategory(name: selectedCategory.title ?? "Без названия", trackers: [])
+            self?.selectedCategory = TrackerCategory(name: selectedCategory.title ?? L10n.trackerNameMissing, trackers: [])
             self?.updateCategoryUI()
             self?.updateCreateButtonState()
         }

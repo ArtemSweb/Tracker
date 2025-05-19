@@ -13,7 +13,7 @@ final class CreateCategoryViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Новая категория"
+        label.text = L10n.categoryCreateTitle
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .tBlack
         label.textAlignment = .center
@@ -22,7 +22,7 @@ final class CreateCategoryViewController: UIViewController {
     
     private let nameField: UITextField = {
         let field = UITextField()
-        field.placeholder = "Введите название категории"
+        field.placeholder = L10n.categoryCreatePlaceholder
         field.textColor = .tBlack
         field.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
         field.layer.cornerRadius = 16
@@ -33,7 +33,7 @@ final class CreateCategoryViewController: UIViewController {
     
     private let createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(L10n.doneButton, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .tGray

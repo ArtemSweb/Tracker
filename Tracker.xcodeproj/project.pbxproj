@@ -6,11 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		AC0BD9322DDA6E2C00E24ACF /* SwiftGenCLI in Frameworks */ = {isa = PBXBuildFile; productRef = AC0BD9312DDA6E2C00E24ACF /* SwiftGenCLI */; };
-		AC0BD9342DDA6E2C00E24ACF /* SwiftGenKit in Frameworks */ = {isa = PBXBuildFile; productRef = AC0BD9332DDA6E2C00E24ACF /* SwiftGenKit */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		ACED323A2D8DC4C800B11894 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -41,8 +36,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC0BD9342DDA6E2C00E24ACF /* SwiftGenKit in Frameworks */,
-				AC0BD9322DDA6E2C00E24ACF /* SwiftGenCLI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,8 +78,6 @@
 			);
 			name = Tracker;
 			packageProductDependencies = (
-				AC0BD9312DDA6E2C00E24ACF /* SwiftGenCLI */,
-				AC0BD9332DDA6E2C00E24ACF /* SwiftGenKit */,
 			);
 			productName = Tracker;
 			productReference = ACED323A2D8DC4C800B11894 /* Tracker.app */;
@@ -120,7 +111,6 @@
 			mainGroup = ACED32312D8DC4C800B11894;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				AC0BD9302DDA6E2C00E24ACF /* XCRemoteSwiftPackageReference "SwiftGen" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = ACED323B2D8DC4C800B11894 /* Products */;
@@ -360,30 +350,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		AC0BD9302DDA6E2C00E24ACF /* XCRemoteSwiftPackageReference "SwiftGen" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftGen/SwiftGen";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.6.3;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		AC0BD9312DDA6E2C00E24ACF /* SwiftGenCLI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AC0BD9302DDA6E2C00E24ACF /* XCRemoteSwiftPackageReference "SwiftGen" */;
-			productName = SwiftGenCLI;
-		};
-		AC0BD9332DDA6E2C00E24ACF /* SwiftGenKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AC0BD9302DDA6E2C00E24ACF /* XCRemoteSwiftPackageReference "SwiftGen" */;
-			productName = SwiftGenKit;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = ACED32322D8DC4C800B11894 /* Project object */;
 }
