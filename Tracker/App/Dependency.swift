@@ -68,7 +68,7 @@ final class Dependency {
         tabBarController.viewControllers = [trackerNav, statsNav]
         
         let topLine = UIView()
-        topLine.backgroundColor = UIColor.tGray
+        topLine.backgroundColor = .tGray
         topLine.translatesAutoresizingMaskIntoConstraints = false
         tabBarController.tabBar.addSubview(topLine)
         

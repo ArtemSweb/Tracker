@@ -46,7 +46,7 @@ final class CreateHabitViewController: UIViewController {
         let field = UITextField()
         field.placeholder = L10n.trackerNamePlaceholder
         field.textColor = .tBlack
-        field.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
+        field.backgroundColor = .backgroundGray
         field.layer.cornerRadius = 16
         field.setPadding(left: 16)
         field.clearButtonMode = .whileEditing
@@ -55,7 +55,7 @@ final class CreateHabitViewController: UIViewController {
     
     private let optionContainerView: UIView = {
         let view = UIView()
-        view.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
+        view.backgroundColor = .backgroundGray
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
         return view
@@ -96,7 +96,7 @@ final class CreateHabitViewController: UIViewController {
     //MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .tWhite
         setup()
         setupActions()
         
@@ -212,6 +212,8 @@ final class CreateHabitViewController: UIViewController {
         
         createButton.isEnabled = nameFilled && categoryChosen && scheduleChosen && emojiChosen && colorChosen
         createButton.backgroundColor = createButton.isEnabled ? .tBlack : .gray
+        let textColor = createButton.isEnabled ? UIColor(resource: .tWhite) : UIColor(resource: .alwaysWhite)
+        createButton.setTitleColor(textColor, for: .normal)
     }
     
     private func updateScheduleUI() {

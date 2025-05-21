@@ -24,7 +24,7 @@ final class CreateCategoryViewController: UIViewController {
         let field = UITextField()
         field.placeholder = L10n.categoryCreatePlaceholder
         field.textColor = .tBlack
-        field.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
+        field.backgroundColor = .backgroundGray
         field.layer.cornerRadius = 16
         field.setPadding(left: 16)
         field.clearButtonMode = .whileEditing
@@ -34,7 +34,7 @@ final class CreateCategoryViewController: UIViewController {
     private let createButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle(L10n.doneButton, for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.tWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .tGray
         button.layer.cornerRadius = 16
@@ -44,7 +44,7 @@ final class CreateCategoryViewController: UIViewController {
  
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .tWhite
         setupLayout()
         setupActions()
         enableHideKeyboardOnTap()

@@ -15,8 +15,8 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     // MARK: - UI компоненты
     private let addTrackingButton: UIButton = {
         let button = UIButton()
-        button.setTitle("", for: .normal)
         button.setImage(UIImage(resource: .plus).withRenderingMode(.alwaysOriginal), for: .normal)
+        button.tintColor = .tWhite
         return button
     }()
     
@@ -95,7 +95,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     //MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .tWhite
         
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         addTrackingButton.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)

@@ -26,7 +26,7 @@ final class OnboardingViewController: UIPageViewController {
         
         let onboardingButton = UIButton(type: .system)
         onboardingButton.setTitle(L10n.onboardingButton, for: .normal)
-        onboardingButton.backgroundColor = .tBlack
+        onboardingButton.backgroundColor = .onboardingBlack
         onboardingButton.setTitleColor(.white, for: .normal)
         onboardingButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         onboardingButton.layer.cornerRadius = 16

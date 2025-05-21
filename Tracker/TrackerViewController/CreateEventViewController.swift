@@ -39,7 +39,7 @@ final class CreateEventViewController: UIViewController {
         field.placeholder = L10n.trackerNamePlaceholder
         field.textColor = .tBlack
         field.font = UIFont.systemFont(ofSize: 17)
-        field.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
+        field.backgroundColor = .backgroundGray
         field.layer.cornerRadius = 16
         field.setPadding(left: 16)
         field.clearButtonMode = .whileEditing
@@ -75,7 +75,7 @@ final class CreateEventViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .tWhite
         
         setup()
         updateCategoryUI()
@@ -187,6 +187,8 @@ final class CreateEventViewController: UIViewController {
         
         createButton.isEnabled = nameFilled && categoryChosen && emojiChosen && colorChosen
         createButton.backgroundColor = createButton.isEnabled ? .tBlack : .gray
+        let textColor = createButton.isEnabled ? UIColor(resource: .tWhite) : UIColor(resource: .alwaysWhite)
+        createButton.setTitleColor(textColor, for: .normal)
     }
     
     @objc private func textFieldDidChange() {

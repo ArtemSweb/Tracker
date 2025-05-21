@@ -42,7 +42,7 @@ final class CategoryViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle(L10n.categoryAddButton, for: .normal)
         button.backgroundColor = .tBlack
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.tWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         return button
@@ -60,7 +60,7 @@ final class CategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = .tWhite
         
         setupUI()
         

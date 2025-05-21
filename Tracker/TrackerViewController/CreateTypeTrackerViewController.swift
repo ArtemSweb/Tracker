@@ -37,6 +37,7 @@ final class CreateTypeTrackerViewController: UIViewController {
         let button = UIButton()
         button.setTitle(L10n.habit, for: .normal)
         button.backgroundColor = .tBlack
+        button.setTitleColor(.tWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         return button
@@ -46,6 +47,7 @@ final class CreateTypeTrackerViewController: UIViewController {
         let button = UIButton()
         button.setTitle(L10n.event, for: .normal)
         button.backgroundColor = .tBlack
+        button.setTitleColor(.tWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         return button
@@ -54,7 +56,7 @@ final class CreateTypeTrackerViewController: UIViewController {
     //MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .tWhite
         
         addConstraints()
         
