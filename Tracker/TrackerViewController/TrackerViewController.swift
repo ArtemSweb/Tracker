@@ -14,9 +14,9 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     // MARK: - UI компоненты
     private let addTrackingButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(resource: .plus).withRenderingMode(.alwaysOriginal), for: .normal)
-        button.tintColor = .tWhite
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(resource: .addTrackerButton).withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = .tBlack
         return button
     }()
     
@@ -49,7 +49,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     private let plagLabel: UILabel = {
         let label = UILabel()
-        label.text = L10n.baseScreenPrompt
+        label.text = L10n.whatShallWeTrack
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .tBlack
         return label

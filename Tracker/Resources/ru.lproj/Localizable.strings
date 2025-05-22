@@ -14,7 +14,7 @@
 // MARK: - Главный экран
 "trackers" = "Трекеры";
 "search" = "Поиск";
-"baseScreenPrompt" = "Что будем отслеживать?";
+"whatShallWeTrack" = "Что будем отслеживать?";
 "statistic" = "Статистика";
 
 // MARK: - Создание трекеров
@@ -56,6 +56,13 @@
 
 "schedule" = "Расписание";
 "everyDay" = "Каждый день";
+
+//MARK: - Статистика
+"nothing_to_analyze" = "Анализировать пока нечего";
+"best_period" = "Лучший период";
+"ideal_days" = "Идеальные дни";
+"trackers_completed" = "Трекеров завершено";
+"average_value" = "Среднее значение";
 
 // MARK: - Цвета
 "color" = "Цвет";

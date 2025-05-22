@@ -14,7 +14,7 @@
 // MARK: - Main Screen
 "trackers" = "Trackers";
 "search" = "Search";
-"baseScreenPrompt" = "What shall we track?";
+"whatShallWeTrack" = "What shall we track?";
 "statistic" = "Statistics";
 
 // MARK: - Tracker Creation
@@ -36,6 +36,13 @@
 "categoryCreateTitle" = "New category";
 "categoryCreatePlaceholder" = "Enter category name";
 "categoryCreateButton" = "Create";
+
+//MARK: - Statistics
+"nothing_to_analyze" = "Nothing to analyze yet";
+"best_period" = "Best period";
+"ideal_days" = "Perfect days";
+"trackers_completed" = "Trackers completed";
+"average_value" = "Average value";
 
 // MARK: - Weekdays and Schedule
 "mondayFull" = "Monday";

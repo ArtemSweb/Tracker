@@ -11,7 +11,7 @@ final class TrackerViewModel {
     
     var categories: [TrackerCategory] = []
     var completedTrackers: [TrackerRecord] = []
-    
+    var onStatisticUpdate: ((StatisticViewModel) -> Void)?
     let trackerStore: TrackerStore
     let categoryStore: TrackerCategoryStore
     let recordStore: TrackerRecordStore
@@ -58,6 +58,7 @@ final class TrackerViewModel {
             recordStore.addRecord(record)
             completedTrackers.append(record)
         }
+        notifyStatisticUpdate()
     }
     
     func completedDays(for trackerID: UUID) -> Int {
@@ -116,10 +117,18 @@ final class TrackerViewModel {
             category: coreDataCategory
         )
         loadTrackers()
+        notifyStatisticUpdate()
     }
     
     func loadTrackers() {
         categories = trackerStore.fetchTrackersGroupedByCategory()
+    }
+    
+    //Обновление статистики
+    private func notifyStatisticUpdate() {
+        let allTrackers = categories.flatMap { $0.trackers }
+        let statVM = StatisticViewModel(trackers: allTrackers, records: completedTrackers)
+        onStatisticUpdate?(statVM)
     }
 }
 

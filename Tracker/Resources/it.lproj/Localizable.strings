@@ -14,7 +14,7 @@
 // MARK: - Schermata principale
 "trackers" = "Tracker";
 "search" = "Cerca";
-"baseScreenPrompt" = "Cosa vogliamo tracciare?";
+"whatShallWeTrack" = "Cosa vogliamo tracciare?";
 "statistic" = "Statistiche";
 
 // MARK: - Creazione di tracker
@@ -36,6 +36,13 @@
 "categoryCreateTitle" = "Nuova categoria";
 "categoryCreatePlaceholder" = "Inserisci il nome della categoria";
 "categoryCreateButton" = "Crea";
+
+//MARK: - Statistiche
+"nothing_to_analyze" = "Niente da analizzare per ora";
+"best_period" = "Periodo migliore";
+"ideal_days" = "Giorni perfetti";
+"trackers_completed" = "Tracker completati";
+"average_value" = "Valore medio";
 
 // MARK: - Giorni della settimana e programma
 "mondayFull" = "Lunedì";
