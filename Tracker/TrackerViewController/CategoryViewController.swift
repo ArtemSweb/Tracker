@@ -156,4 +156,42 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
+    
+    func tableView(_ tableView: UITableView,
+                   contextMenuConfigurationForRowAt indexPath: IndexPath,
+                   point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let category = viewModel.category(at: indexPath.row)
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let editAction = UIAction(title: L10n.edit) { _ in
+                self.presentEditCategoryScreen(for: category)
+            }
+            
+            let deleteAction = UIAction(title: L10n.delete, attributes: .destructive) { _ in
+                self.confirmCategoryDeletion(category)
+            }
+            
+            return UIMenu(title: "", children: [editAction, deleteAction])
+        }
+    }
+    
+    private func presentEditCategoryScreen(for category: TrackerCategoryCoreData) {
+        let editVC = EditCategoryViewController(category: category)
+        editVC.onCategoryRenamed = { [weak self] newTitle in
+            self?.viewModel.categoryStore.renameCategory(category, to: newTitle)
+            self?.viewModel.loadCategories()
+        }
+        toRepresentAsSheet(editVC)
+    }
+    
+    private func confirmCategoryDeletion(_ category: TrackerCategoryCoreData) {
+        let alert = UIAlertController(title: L10n.titleDeleteCategory, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: L10n.delete, style: .destructive) { _ in
+            self.viewModel.categoryStore.deleteCategory(category)
+            self.viewModel.loadCategories()
+        })
+        alert.addAction(UIAlertAction(title: L10n.cancelButton, style: .cancel))
+        present(alert, animated: true)
+    }
 }

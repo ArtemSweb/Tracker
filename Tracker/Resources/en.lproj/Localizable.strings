@@ -44,6 +44,24 @@
 "trackers_completed" = "Trackers completed";
 "average_value" = "Average value";
 
+// MARK: - ContextMenu
+"save" = "Save";
+"pin" = "Pin";
+"unpin" = "Unpin";
+"edit" = "Edit";
+"delete" = "Delete";
+"title_delete_category" = "Is this category definitely not needed?";
+"title_delete_tracker" = "Are you sure you want to delete the tracker?";
+
+// MARK: - Editing Screens
+"all_trackers" = "All Trackers";
+"trackers_today" = "Today's Trackers";
+"completed" = "Completed";
+"uncompleted" = "Uncompleted";
+"edit_category" = "Edit Category";
+"filters" = "Filters";
+"nothing_found" = "Nothing found";
+
 // MARK: - Weekdays and Schedule
 "mondayFull" = "Monday";
 "tuesdayFull" = "Tuesday";

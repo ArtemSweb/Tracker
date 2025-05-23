@@ -37,6 +37,31 @@
 "categoryCreatePlaceholder" = "Введите название категории";
 "categoryCreateButton" = "Создать";
 
+//MARK: - Статистика
+"nothing_to_analyze" = "Анализировать пока нечего";
+"best_period" = "Лучший период";
+"ideal_days" = "Идеальные дни";
+"trackers_completed" = "Трекеров завершено";
+"average_value" = "Среднее значение";
+
+// MARK: - Контекстное меню
+"save" = "Сохранить";
+"pin" = "Закрепить";
+"unpin" = "Открепить";
+"edit" = "Редактировать";
+"delete" = "Удалить";
+"title_delete_category" = "Эта категория точно не нужна?";
+"title_delete_tracker" = "Уверены что хотите удалить трекер?";
+
+// MARK: - Экраны редактирования
+"all_trackers" = "Все трекеры";
+"trackers_today" = "Трекеры на сегодня";
+"completed" = "Завершенные";
+"uncompleted" = "Не завершенные";
+"edit_category" = "Редактирование категории";
+"filters" = "Фильтры";
+"nothing_found" = "Ничего не найдено";
+
 // MARK: - Дни недели и расписание
 "mondayFull" = "Понедельник";
 "tuesdayFull" = "Вторник";
@@ -56,13 +81,6 @@
 
 "schedule" = "Расписание";
 "everyDay" = "Каждый день";
-
-//MARK: - Статистика
-"nothing_to_analyze" = "Анализировать пока нечего";
-"best_period" = "Лучший период";
-"ideal_days" = "Идеальные дни";
-"trackers_completed" = "Трекеров завершено";
-"average_value" = "Среднее значение";
 
 // MARK: - Цвета
 "color" = "Цвет";
