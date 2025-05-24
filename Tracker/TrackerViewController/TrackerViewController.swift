@@ -264,6 +264,30 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: collectionView.bounds.width, height: 30)
     }
     
+    func collectionView(_ collectionView: UICollectionView,
+                        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard
+            let indexPath = configuration.identifier as? IndexPath,
+            let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
+        else {
+            return nil
+        }
+        
+        return cell.targetedPreview()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard
+            let indexPath = configuration.identifier as? IndexPath,
+            let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
+        else {
+            return nil
+        }
+        
+        return cell.targetedPreview()
+    }
+    
 }
 
 extension TrackerViewController: TrackerStoreDelegate {
@@ -272,3 +296,61 @@ extension TrackerViewController: TrackerStoreDelegate {
         collectionView.reloadData()
     }
 }
+
+
+extension TrackerViewController {
+    
+    // MARK: - Контекстное меню для трекера
+    func collectionView(_ collectionView: UICollectionView,
+                        contextMenuConfigurationForItemAt indexPath: IndexPath,
+                        point: CGPoint) -> UIContextMenuConfiguration? {
+        let tracker = viewModel.tracker(at: indexPath, for: currentDate)
+        let isPinned = tracker.isPinned
+        
+        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil) { [weak self] _ in
+            let pinAction = UIAction(title: isPinned ? L10n.unpin : L10n.pin) { _ in
+                self?.viewModel.togglePin(for: tracker)
+            }
+            let editAction = UIAction(title: L10n.edit) { [weak self] _ in
+                self?.startEditFlow(for: tracker)
+                AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "edit")
+            }
+            let deleteAction = UIAction(title: L10n.delete, attributes: .destructive) { [weak self] _ in
+                self?.showDeleteConfirmation(for: tracker)
+                AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "delete")
+            }
+            return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
+        }
+    }
+    
+    private func findCategoryFor(tracker: Tracker) -> TrackerCategory? {
+        return viewModel.categories.first { category in
+            category.trackers.contains(where: { $0.id == tracker.id })
+        }
+    }
+    
+    func startEditFlow(for tracker: Tracker) {
+        guard findCategoryFor(tracker: tracker) != nil else { return }
+        
+        let editVC = EditHabitViewController()
+        editVC.viewModel = viewModel
+        editVC.categoryViewModel = categoryViewModel
+        editVC.editingTracker = tracker
+        
+        toRepresentAsSheet(editVC)
+    }
+    
+    func showDeleteConfirmation(for tracker: Tracker) {
+        let alert = UIAlertController(
+            title: "",
+            message: L10n.titleDeleteTracker,
+            preferredStyle: .actionSheet
+        )
+        alert.addAction(UIAlertAction(title: L10n.delete, style: .destructive, handler: { [weak self] _ in
+            self?.viewModel.deleteTracker(for: tracker)
+        }))
+        alert.addAction(UIAlertAction(title: L10n.cancelButton, style: .cancel))
+        present(alert, animated: true)
+    }
+}
+

@@ -47,6 +47,8 @@ internal enum L10n {
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
   /// Edit Category
   internal static let editCategory = L10n.tr("Localizable", "edit_category", fallback: "Edit Category")
+  /// Edit habit
+  internal static let editHabit = L10n.tr("Localizable", "edit_habit", fallback: "Edit habit")
   /// Irregular event
   internal static let event = L10n.tr("Localizable", "event", fallback: "Irregular event")
   /// Every day
@@ -84,6 +86,8 @@ internal enum L10n {
   internal static let onboardingTitleRed = L10n.tr("Localizable", "onboardingTitleRed", fallback: "Even if it’s not liters of water and yoga")
   /// Pin
   internal static let pin = L10n.tr("Localizable", "pin", fallback: "Pin")
+  /// Pinned
+  internal static let pinned = L10n.tr("Localizable", "pinned", fallback: "Pinned")
   /// Saturday
   internal static let saturdayFull = L10n.tr("Localizable", "saturdayFull", fallback: "Saturday")
   /// Sat

@@ -124,11 +124,29 @@ final class TrackerViewModel {
         categories = trackerStore.fetchTrackersGroupedByCategory()
     }
     
+    func updateTracker(_ tracker: Tracker, newCategory: TrackerCategoryCoreData?) {
+        trackerStore.updateTracker(tracker, newCategory: newCategory)
+        loadTrackers()
+        notifyStatisticUpdate()
+    }
+    
+    func deleteTracker(for tracker: Tracker) {
+        trackerStore.deleteTracker(for: tracker.id)
+        loadTrackers()
+        notifyStatisticUpdate()
+    }
+    
     //Обновление статистики
     private func notifyStatisticUpdate() {
         let allTrackers = categories.flatMap { $0.trackers }
         let statVM = StatisticViewModel(trackers: allTrackers, records: completedTrackers)
         onStatisticUpdate?(statVM)
+    }
+    
+    func togglePin(for tracker: Tracker) {
+        trackerStore.updatePinState(for: tracker.id, isPinned: !tracker.isPinned)
+        loadTrackers()
+        notifyStatisticUpdate()
     }
 }
 

@@ -36,6 +36,7 @@
 "categoryCreateTitle" = "New category";
 "categoryCreatePlaceholder" = "Enter category name";
 "categoryCreateButton" = "Create";
+"pinned" = "Pinned";
 
 //MARK: - Statistics
 "nothing_to_analyze" = "Nothing to analyze yet";
@@ -59,6 +60,7 @@
 "completed" = "Completed";
 "uncompleted" = "Uncompleted";
 "edit_category" = "Edit Category";
+"edit_habit" = "Edit habit";
 "filters" = "Filters";
 "nothing_found" = "Nothing found";
 

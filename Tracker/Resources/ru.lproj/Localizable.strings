@@ -36,6 +36,7 @@
 "categoryCreateTitle" = "Новая категория";
 "categoryCreatePlaceholder" = "Введите название категории";
 "categoryCreateButton" = "Создать";
+"pinned" = "Закреплённые";
 
 //MARK: - Статистика
 "nothing_to_analyze" = "Анализировать пока нечего";
@@ -59,6 +60,7 @@
 "completed" = "Завершенные";
 "uncompleted" = "Не завершенные";
 "edit_category" = "Редактирование категории";
+"edit_habit" = "Редактирование привычки";
 "filters" = "Фильтры";
 "nothing_found" = "Ничего не найдено";
 
