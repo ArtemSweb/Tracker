@@ -26,9 +26,8 @@ final class CategoryCell: UITableViewCell {
         titleLabel.textColor = .tBlack
         
         separator.backgroundColor = .tGray
-        checkmarkImageView.image = UIImage(systemName: "checkmark")
         
-        [titleLabel, separator, checkmarkImageView].forEach {
+        [titleLabel, separator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -42,11 +41,6 @@ final class CategoryCell: UITableViewCell {
             separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            
-            checkmarkImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            checkmarkImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            checkmarkImageView.widthAnchor.constraint(equalToConstant: 24),
-            checkmarkImageView.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
     

@@ -153,10 +153,9 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
-        updateFilterButtonState()
         viewModel.loadTrackers()
-        viewModel.trackerStore.delegate = self
-    
+        updateFilterButtonState()
+        
         viewModel.onTrackersUpdated = { [weak self] _ in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
@@ -221,7 +220,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     private func updateEmptyState() {
         let hasAny = viewModel.hasAnyTrackers(for: currentDate)
         let visible = viewModel.totalVisibleTrackers(for: currentDate)
-        print(visible)
+
         if !hasAny {
             plagStackView.isHidden = false
             filterStackView.isHidden = true
@@ -430,14 +429,6 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
         }
         
         return cell.targetedPreview()
-    }
-    
-}
-
-extension TrackerViewController: TrackerStoreDelegate {
-    func didUpdateTrackers() {
-        viewModel.loadTrackers()
-        collectionView.reloadData()
     }
 }
 

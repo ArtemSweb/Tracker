@@ -99,7 +99,6 @@ final class TrackerViewModel {
             let filteredTrackers = category.trackers
                 .filter { shouldDisplay($0, on: date) }
                 .filter { searchText.isEmpty || $0.name.lowercased().contains(searchText) }
-            
             return filteredTrackers.isEmpty
             ? nil
             : TrackerCategory(name: category.name, trackers: filteredTrackers)
