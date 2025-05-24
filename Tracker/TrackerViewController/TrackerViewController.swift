@@ -9,7 +9,7 @@ import UIKit
 
 class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
-    private let viewModel: TrackerViewModel
+    let viewModel: TrackerViewModel
     private let categoryViewModel: TrackerCategoryViewModel
     
     // MARK: - UI компоненты
