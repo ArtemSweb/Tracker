@@ -336,12 +336,6 @@ extension TrackerViewController {
         }
     }
     
-    private func findCategoryFor(tracker: Tracker) -> TrackerCategory? {
-        return viewModel.categories.first { category in
-            category.trackers.contains(where: { $0.id == tracker.id })
-        }
-    }
-    
     func startEditFlow(for tracker: Tracker) {
         guard findCategoryFor(tracker: tracker) != nil else { return }
         
@@ -351,6 +345,12 @@ extension TrackerViewController {
         editVC.editingTracker = tracker
         
         toRepresentAsSheet(editVC)
+    }
+    
+    private func findCategoryFor(tracker: Tracker) -> TrackerCategory? {
+        return viewModel.categories.first { category in
+            category.trackers.contains(where: { $0.id == tracker.id })
+        }
     }
     
     func showDeleteConfirmation(for tracker: Tracker) {

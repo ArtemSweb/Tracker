@@ -129,13 +129,14 @@ final class EditHabitViewController: UIViewController {
             emojiAndColorPicker.selectedEmoji = tracker.emoji
             emojiAndColorPicker.selectedColor = tracker.color
             
-            if let category = viewModel?.categories.first(where: { $0.trackers.contains(where: { $0.id == tracker.id }) }),
-               let coreCategory = viewModel?.categoryStore.fetchCategory(with: category.name) {
-                selectedCategory = category
-                selectedCoreDataCategory = coreCategory
-            } else {
-                dismiss(animated: true)
+            guard let category = viewModel?.categories.first(where: { $0.trackers.contains(where: { $0.id == tracker.id }) }),
+                  let coreCategory = viewModel?.categoryStore.fetchCategory(with: category.name)
+            else {
+                return
             }
+            
+            selectedCategory = category
+            selectedCoreDataCategory = coreCategory
         }
         hideElements()
         updateCreateButtonState()
@@ -255,7 +256,6 @@ final class EditHabitViewController: UIViewController {
             saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
         ])
     }
-    
     
     private func setupActions() {
         categoryButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(categoryTapped)))
