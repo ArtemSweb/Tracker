@@ -1,0 +1,88 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Артем Солодовников on 18.05.2025.
+  
+*/
+
+// MARK: - Onboarding
+"onboardingTitleBlue" = "Tieni traccia solo di ciò che vuoi";
+"onboardingButton" = "Che tecnologia!";
+"onboardingTitleRed" = "Anche se non sono litri d'acqua e yoga";
+
+// MARK: - Schermata principale
+"trackers" = "Tracker";
+"search" = "Cerca";
+"whatShallWeTrack" = "Cosa vogliamo tracciare?";
+"statistic" = "Statistiche";
+
+// MARK: - Creazione di tracker
+"newEventButton" = "Nuovo evento irregolare";
+"trackerNamePlaceholder" = "Inserisci il nome del tracker";
+"cancelButton" = "Annulla";
+"trackerNameMissing" = "Senza nome";
+"newHabitButton" = "Nuova abitudine";
+"createTrackerTitle" = "Creazione di un tracker";
+"habit" = "Abitudine";
+"event" = "Evento irregolare";
+"doneButton" = "Fatto";
+
+// MARK: - Categorie
+"categoryTitleMissing" = "Senza categoria";
+"categoryLabel" = "Categoria";
+"categoryListDescription" = "Abitudini ed eventi possono essere\nraggruppati per significato";
+"categoryAddButton" = "Aggiungi categoria";
+"categoryCreateTitle" = "Nuova categoria";
+"categoryCreatePlaceholder" = "Inserisci il nome della categoria";
+"categoryCreateButton" = "Crea";
+"pinned" = "Appuntati";
+
+//MARK: - Statistiche
+"nothing_to_analyze" = "Niente da analizzare per ora";
+"best_period" = "Periodo migliore";
+"ideal_days" = "Giorni perfetti";
+"trackers_completed" = "Tracker completati";
+"average_value" = "Valore medio";
+
+// MARK: - Menu contestuale
+"save" = "Salva";
+"pin" = "Fissa";
+"unpin" = "Scollega";
+"edit" = "Modifica";
+"delete" = "Elimina";
+"title_delete_category" = "Sei sicuro che questa categoria non ti serva più?";
+"title_delete_tracker" = "Sei sicuro di voler eliminare il tracker?";
+
+// MARK: - Schermate di modifica
+"all_trackers" = "Tutti i tracker";
+"trackers_today" = "Tracker per oggi";
+"completed" = "Completati";
+"uncompleted" = "Non completati";
+"edit_category" = "Modifica categoria";
+"edit_habit" = "Modifica abitudine";
+"filters" = "Filtri";
+"nothing_found" = "Nessun risultato";
+
+// MARK: - Giorni della settimana e programma
+"mondayFull" = "Lunedì";
+"tuesdayFull" = "Martedì";
+"wednesdayFull" = "Mercoledì";
+"thursdayFull" = "Giovedì";
+"fridayFull" = "Venerdì";
+"saturdayFull" = "Sabato";
+"sundayFull" = "Domenica";
+
+"mondayShort" = "Lun";
+"tuesdayShort" = "Mar";
+"wednesdayShort" = "Mer";
+"thursdayShort" = "Gio";
+"fridayShort" = "Ven";
+"saturdayShort" = "Sab";
+"sundayShort" = "Dom";
+
+"schedule" = "Programma";
+"everyDay" = "Ogni giorno";
+
+// MARK: - Colori
+"color" = "Colore";

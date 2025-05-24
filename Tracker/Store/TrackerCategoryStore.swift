@@ -15,6 +15,11 @@ final class TrackerCategoryStore {
     init(context: NSManagedObjectContext) {
         self.context = context
     }
+    
+    private func notifyObservers() {
+        let all = fetchAllCategories()
+        onCategoriesChanged?(all)
+    }
 
     func fetchCategory(with title: String) -> TrackerCategoryCoreData? {
         let request: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
@@ -47,5 +52,27 @@ final class TrackerCategoryStore {
         } catch {
             print("Ошибка сохранения контекста категории: \(error)")
         }
+    }
+    
+    func renameCategory(_ category: TrackerCategoryCoreData, to newTitle: String) {
+        category.title = newTitle
+        saveContext()
+        notifyObservers()
+    }
+    
+    func deleteCategory(_ category: TrackerCategoryCoreData) {
+        let request: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "category == %@", category)
+
+        do {
+            let trackers = try context.fetch(request)
+            trackers.forEach { context.delete($0) }
+        } catch {
+            print("Ошибка при получении трекеров для удаления категории: \(error)")
+        }
+
+        context.delete(category)
+        saveContext()
+        notifyObservers()
     }
 }

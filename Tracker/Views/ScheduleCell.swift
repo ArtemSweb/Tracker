@@ -22,7 +22,7 @@ final class ScheduleCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = .clear
         contentView.layer.masksToBounds = true
-        contentView.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
+        contentView.backgroundColor = .backgroundGray
         
         setup()
         addConstraints()

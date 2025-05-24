@@ -49,7 +49,7 @@ final class EmojiAndColorPickerView: UIView {
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.textColor = .tBlack
         label.textAlignment = .center
-        label.text = "Эмоджи"
+        label.text = "emoji"
         return label
     }()
     
@@ -58,7 +58,7 @@ final class EmojiAndColorPickerView: UIView {
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.textColor = .tBlack
         label.textAlignment = .center
-        label.text = "Цвет"
+        label.text = L10n.color
         return label
     }()
     

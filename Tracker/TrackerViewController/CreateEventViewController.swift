@@ -27,7 +27,7 @@ final class CreateEventViewController: UIViewController {
     // MARK: - UI компоненты
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Новое нерегулярное событие"
+        label.text = L10n.newEventButton
         label.textColor = .tBlack
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textAlignment = .center
@@ -36,21 +36,21 @@ final class CreateEventViewController: UIViewController {
     
     private let nameField: UITextField = {
         let field = UITextField()
-        field.placeholder = "Введите название трекера"
+        field.placeholder = L10n.trackerNamePlaceholder
         field.textColor = .tBlack
         field.font = UIFont.systemFont(ofSize: 17)
-        field.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
+        field.backgroundColor = .backgroundGray
         field.layer.cornerRadius = 16
         field.setPadding(left: 16)
         field.clearButtonMode = .whileEditing
         return field
     }()
     
-    private let categoryButtonView = OptionsRowView(title: "Категория")
+    private let categoryButtonView = OptionsRowView(title: L10n.categoryLabel)
     
     private let cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(L10n.cancelButton, for: .normal)
         button.setTitleColor(.tred, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.borderWidth = 1
@@ -62,7 +62,7 @@ final class CreateEventViewController: UIViewController {
     
     private let createButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(L10n.categoryCreateButton, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -75,7 +75,7 @@ final class CreateEventViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .tWhite
         
         setup()
         updateCategoryUI()
@@ -172,7 +172,7 @@ final class CreateEventViewController: UIViewController {
         guard let viewModel = categoryViewModel else { return }
         let categoryVC = CategoryViewController(viewModel: viewModel)
         categoryVC.onCategorySelected = { [weak self] selectedCategory in
-            self?.selectedCategory = TrackerCategory(name: selectedCategory.title ?? "Без названия", trackers: [])
+            self?.selectedCategory = TrackerCategory(name: selectedCategory.title ?? L10n.trackerNameMissing, trackers: [])
             self?.updateCategoryUI()
             self?.updateCreateButtonState()
         }
@@ -187,6 +187,8 @@ final class CreateEventViewController: UIViewController {
         
         createButton.isEnabled = nameFilled && categoryChosen && emojiChosen && colorChosen
         createButton.backgroundColor = createButton.isEnabled ? .tBlack : .gray
+        let textColor = createButton.isEnabled ? UIColor(resource: .tWhite) : UIColor(resource: .alwaysWhite)
+        createButton.setTitleColor(textColor, for: .normal)
     }
     
     @objc private func textFieldDidChange() {
