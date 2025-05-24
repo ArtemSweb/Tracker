@@ -165,12 +165,12 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        AnalyticsService.shared.sendEvent(event: "Отображение главного экрана", screen: "TrackerViewController")
+        AnalyticsService.shared.sendEvent(event: "open", screen: "Main")
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        AnalyticsService.shared.sendEvent(event: "Закрытые главного экрана", screen: "TrackerViewController")
+        AnalyticsService.shared.sendEvent(event: "close", screen: "Main")
     }
     
     //MARK: - вспомогательные функции
@@ -209,19 +209,16 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
             plagStackView.isHidden = false
             filterStackView.isHidden = true
             filterButton.isHidden = true
-            print("вызываем сатану-1")
         }
         else if visible == 0 {
             plagStackView.isHidden = true
             filterStackView.isHidden = false
             filterButton.isHidden = false
-            print("вызываем сатану-2")
         }
         else {
             plagStackView.isHidden = true
             filterStackView.isHidden = true
             filterButton.isHidden = false
-            print("вызываем сатану-3")
         }
     }
     
@@ -274,7 +271,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
             }
             self.viewModel.loadTrackers()
         }
-        AnalyticsService.shared.sendEvent(event: "Создание нового трекера", screen: "TrackerViewController", item: "add track")
+        AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "add_track")
         toRepresentAsSheet(createTrackerSelection)
     }
     
@@ -291,7 +288,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
             self.updateFilterButtonState()
             self.updateEmptyState()
         }
-        AnalyticsService.shared.sendEvent(event: "Клик по фильтрам", screen: "TrackerViewController", item: "filter")
+        AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "filter")
         toRepresentAsSheet(filterVC)
     }
 }
@@ -327,7 +324,7 @@ extension TrackerViewController: UICollectionViewDataSource {
             let today = Calendar.current.startOfDay(for: Date())
             guard self.currentDate <= today else { return }
             
-            AnalyticsService.shared.sendEvent(event: "Клик по трекеру", screen: "TrackerViewController", item: "track")
+            AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "track")
             
             self.viewModel.toggleTrackerCompletion(trackerID: tracker.id, on: self.currentDate)
             if let cell = self.collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell {
@@ -443,11 +440,11 @@ extension TrackerViewController {
             }
             let editAction = UIAction(title: L10n.edit) { [weak self] _ in
                 self?.startEditFlow(for: tracker)
-                AnalyticsService.shared.sendEvent(event: "Редактирование трекера", screen: "TrackerViewController", item: "edit")
+                AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "edit")
             }
             let deleteAction = UIAction(title: L10n.delete, attributes: .destructive) { [weak self] _ in
                 self?.showDeleteConfirmation(for: tracker)
-                AnalyticsService.shared.sendEvent(event: "Удаление трекера", screen: "TrackerViewController", item: "delete")
+                AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "delete")
             }
             return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
         }
