@@ -110,6 +110,16 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         addConstraints()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsService.shared.sendEvent(event: "Отображение главного экрана", screen: "TrackerViewController")
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        AnalyticsService.shared.sendEvent(event: "Закрытые главного экрана", screen: "TrackerViewController")
+    }
+    
     //MARK: - вспомогательные функции
     @objc private func dateChanged() {
         collectionView.reloadData()
@@ -164,6 +174,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
                 self.viewModel.addTracker(tracker, toCategoryWithTitle: newCategory.name)
             }
         }
+        AnalyticsService.shared.sendEvent(event: "Создание нового трекера", screen: "TrackerViewController", item: "add track")
         toRepresentAsSheet(createTrackerSelection)
     }
 }
@@ -198,6 +209,8 @@ extension TrackerViewController: UICollectionViewDataSource {
             
             let today = Calendar.current.startOfDay(for: Date())
             guard self.currentDate <= today else { return }
+            
+            AnalyticsService.shared.sendEvent(event: "Клик по трекеру", screen: "TrackerViewController", item: "track")
             
             self.viewModel.toggleTrackerCompletion(trackerID: tracker.id, on: self.currentDate)
             if let cell = self.collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell {
@@ -313,11 +326,11 @@ extension TrackerViewController {
             }
             let editAction = UIAction(title: L10n.edit) { [weak self] _ in
                 self?.startEditFlow(for: tracker)
-                AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "edit")
+                AnalyticsService.shared.sendEvent(event: "Редактирование трекера", screen: "TrackerViewController", item: "edit")
             }
             let deleteAction = UIAction(title: L10n.delete, attributes: .destructive) { [weak self] _ in
                 self?.showDeleteConfirmation(for: tracker)
-                AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "delete")
+                AnalyticsService.shared.sendEvent(event: "Удаление трекера", screen: "TrackerViewController", item: "delete")
             }
             return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
         }
