@@ -1,13 +1,13 @@
 //
-//  CategoryCell.swift
+//  FilterCell.swift
 //  Tracker
 //
-//  Created by Артем Солодовников on 11.05.2025.
+//  Created by Артем Солодовников on 24.05.2025.
 //
 
 import UIKit
 
-final class CategoryCell: UITableViewCell {
+final class FilterCell: UITableViewCell {
     lazy private var titleLabel = UILabel()
     lazy private var separator = UIView()
     lazy private var checkmarkImageView = UIImageView()
@@ -50,8 +50,9 @@ final class CategoryCell: UITableViewCell {
         ])
     }
     
-    func configure(title: String, isFirst: Bool, isLast: Bool) {
+    func configure(title: String, isChecked: Bool, isFirst: Bool, isLast: Bool) {
         titleLabel.text = title
+        checkmarkImageView.isHidden = !isChecked
         applyCorners(isFirst: isFirst, isLast: isLast)
         separator.isHidden = isLast
     }

@@ -142,6 +142,7 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
         let category = viewModel.category(at: indexPath.row)
         let isFirst = indexPath.row == 0
         let isLast = indexPath.row == viewModel.numberOfCategories - 1
+        let selected = viewModel.category(at: indexPath.row)
 
         cell.configure(title: category.title ?? L10n.trackerNameMissing, isFirst: isFirst, isLast: isLast)
         return cell

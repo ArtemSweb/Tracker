@@ -44,6 +44,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     private let plagImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(resource: .starIcon))
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -61,6 +62,43 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         stackView.alignment = .center
         stackView.distribution = .fill
         stackView.spacing = 8
+        return stackView
+    }()
+    
+    private let filterButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle(L10n.filters, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        button.backgroundColor = .tBlue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.isHidden = true
+        return button
+    }()
+    
+    private let filterImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(resource: .notFountPlaceholder))
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    private let filterLabel: UILabel = {
+        let label = UILabel()
+        label.text = L10n.nothingFound
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .tBlack
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private let filterStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.spacing = 8
+        stackView.isHidden = true
         return stackView
     }()
     
@@ -99,12 +137,27 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         addTrackingButton.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)
+        filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
         viewModel.loadTrackers()
         viewModel.trackerStore.delegate = self
+        
+        updateFilterButtonState()
+        
+        viewModel.onTrackersUpdated = { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+                self?.updateFilterButtonState()
+                self?.updateEmptyState()
+            }
+        }
+        
+        categoryViewModel.onCategoriesUpdated = { [weak self] _ in
+            self?.viewModel.loadTrackers()
+        }
         
         addViews()
         addConstraints()
@@ -122,18 +175,53 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     //MARK: - вспомогательные функции
     @objc private func dateChanged() {
+        if viewModel.currentFilter == .today {
+            viewModel.currentFilter = .all
+        }
         collectionView.reloadData()
+        updateFilterButtonState()
+        updateEmptyState()
     }
     
     private func addViews() {
-        [plagStackView, headerTitleLabel, searchBar, collectionView].forEach {
+        [plagStackView, filterStackView, headerTitleLabel, searchBar, collectionView, filterButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        view.addSubview(plagStackView)
         
         [plagImageView, plagLabel].forEach {
             plagStackView.addArrangedSubview($0)
+        }
+        [filterImageView, filterLabel].forEach {
+            filterStackView.addArrangedSubview($0)
+        }
+    }
+    
+    private func updateFilterButtonState() {
+        filterButton.isHidden = !viewModel.hasAnyTrackers(for: currentDate)
+    }
+    
+    private func updateEmptyState() {
+        let hasAny = viewModel.hasAnyTrackers(for: currentDate)
+        let visible = viewModel.totalVisibleTrackers(for: currentDate)
+        
+        if !hasAny {
+            plagStackView.isHidden = false
+            filterStackView.isHidden = true
+            filterButton.isHidden = true
+            print("вызываем сатану-1")
+        }
+        else if visible == 0 {
+            plagStackView.isHidden = true
+            filterStackView.isHidden = false
+            filterButton.isHidden = false
+            print("вызываем сатану-2")
+        }
+        else {
+            plagStackView.isHidden = true
+            filterStackView.isHidden = true
+            filterButton.isHidden = false
+            print("вызываем сатану-3")
         }
     }
     
@@ -155,10 +243,21 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
             plagImageView.widthAnchor.constraint(equalToConstant: 80),
             plagImageView.heightAnchor.constraint(equalToConstant: 80),
             
+            filterStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            filterStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            filterStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            filterStackView.widthAnchor.constraint(equalToConstant: 80),
+            filterStackView.heightAnchor.constraint(equalToConstant: 80),
+            
             collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: filterButton.topAnchor, constant: -16),
+            
+            filterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 130),
+            filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -130),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
     
@@ -173,9 +272,27 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
             for tracker in newCategory.trackers {
                 self.viewModel.addTracker(tracker, toCategoryWithTitle: newCategory.name)
             }
+            self.viewModel.loadTrackers()
         }
         AnalyticsService.shared.sendEvent(event: "Создание нового трекера", screen: "TrackerViewController", item: "add track")
         toRepresentAsSheet(createTrackerSelection)
+    }
+    
+    @objc private func filterButtonTapped() {
+        let filterVC = TrackerFilterViewController(currentFilter: viewModel.currentFilter)
+        filterVC.onFilterSelected = { [weak self] filter in
+            guard let self = self else { return }
+            self.viewModel.currentFilter = filter
+            if filter == .today {
+                let today = Date()
+                self.datePicker.setDate(today, animated: true)
+            }
+            self.collectionView.reloadData()
+            self.updateFilterButtonState()
+            self.updateEmptyState()
+        }
+        AnalyticsService.shared.sendEvent(event: "Клик по фильтрам", screen: "TrackerViewController", item: "filter")
+        toRepresentAsSheet(filterVC)
     }
 }
 
