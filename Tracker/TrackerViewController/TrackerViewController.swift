@@ -39,6 +39,16 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         let searchBar = UISearchBar()
         searchBar.placeholder = L10n.search
         searchBar.searchBarStyle = .minimal
+        searchBar.searchTextField.textColor = .tBlack
+        
+        if let imageView = searchBar.searchTextField.leftView as? UIImageView {
+            imageView.tintColor = .searchbarBackground
+        }
+        
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(
+            string: L10n.search,
+            attributes: [.foregroundColor: UIColor(resource: .searchbarPlaceholder)]
+        )
         return searchBar
     }()
     
@@ -138,15 +148,15 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
         addTrackingButton.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)
         filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        searchBar.searchTextField.addTarget(self, action: #selector(searchTextChanged(_:)), for: .editingChanged)
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
+        updateFilterButtonState()
         viewModel.loadTrackers()
         viewModel.trackerStore.delegate = self
-        
-        updateFilterButtonState()
-        
+    
         viewModel.onTrackersUpdated = { [weak self] _ in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
@@ -183,6 +193,13 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         updateEmptyState()
     }
     
+    @objc private func searchTextChanged(_ sender: UITextField) {
+        let text = sender.text ?? ""
+        viewModel.filterTrackers(by: text)
+        collectionView.reloadData()
+        self.updateEmptyState()
+    }
+    
     private func addViews() {
         [plagStackView, filterStackView, headerTitleLabel, searchBar, collectionView, filterButton].forEach {
             view.addSubview($0)
@@ -204,7 +221,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     private func updateEmptyState() {
         let hasAny = viewModel.hasAnyTrackers(for: currentDate)
         let visible = viewModel.totalVisibleTrackers(for: currentDate)
-        
+        print(visible)
         if !hasAny {
             plagStackView.isHidden = false
             filterStackView.isHidden = true

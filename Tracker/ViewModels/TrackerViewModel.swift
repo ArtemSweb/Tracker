@@ -23,6 +23,7 @@ final class TrackerViewModel {
     }
     
     var selectedDate: Date = Date()
+    private var searchText: String = ""
     
     init(trackerStore: TrackerStore,
          categoryStore: TrackerCategoryStore,
@@ -33,7 +34,6 @@ final class TrackerViewModel {
         self.recordStore = recordStore
         
         self.completedTrackers = recordStore.fetchAllRecords()
-        trackerStore.delegate = self
     }
     
     func numberOfSections(for date: Date) -> Int {
@@ -89,11 +89,22 @@ final class TrackerViewModel {
         return tracker.schedule.contains(weekday)
     }
     
+    func filterTrackers(by text: String) {
+        searchText = text.lowercased()
+        loadTrackers()
+    }
+    
     func visibleCategories(for date: Date) -> [TrackerCategory] {
         categories.compactMap { category in
-            let trackers = category.trackers.filter { shouldDisplay($0, on: date) }
-            return trackers.isEmpty ? nil : TrackerCategory(name: category.name, trackers: trackers)
+            let filteredTrackers = category.trackers
+                .filter { shouldDisplay($0, on: date) }
+                .filter { searchText.isEmpty || $0.name.lowercased().contains(searchText) }
+            
+            return filteredTrackers.isEmpty
+            ? nil
+            : TrackerCategory(name: category.name, trackers: filteredTrackers)
         }
+        
     }
     
     func addTracker(_ tracker: Tracker, toCategoryWithTitle title: String) {
@@ -187,11 +198,5 @@ final class TrackerViewModel {
         let categories = categories
         let count = categories.reduce(0) { $0 + $1.trackers.count }
         return count > 0
-    }
-}
-
-extension TrackerViewModel: TrackerStoreDelegate {
-    func didUpdateTrackers() {
-        loadTrackers()
     }
 }
