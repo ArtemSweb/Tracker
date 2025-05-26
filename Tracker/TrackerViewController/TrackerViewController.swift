@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TrackerViewController: UIViewController, UICollectionViewDelegate {
+final class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     let viewModel: TrackerViewModel
     private let categoryViewModel: TrackerCategoryViewModel
@@ -143,33 +143,14 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     //MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .tWhite
         
-        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-        addTrackingButton.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)
-        filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
-        searchBar.searchTextField.addTarget(self, action: #selector(searchTextChanged(_:)), for: .editingChanged)
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+        setupView()
+        setupLayout()
+        setupActions()
+        bindViewModel()
         
         viewModel.loadTrackers()
         updateFilterButtonState()
-        
-        viewModel.onTrackersUpdated = { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.collectionView.reloadData()
-                self?.updateFilterButtonState()
-                self?.updateEmptyState()
-            }
-        }
-        
-        categoryViewModel.onCategoriesUpdated = { [weak self] _ in
-            self?.viewModel.loadTrackers()
-        }
-        
-        addViews()
-        addConstraints()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -183,6 +164,42 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     }
     
     //MARK: - вспомогательные функции
+    private func setupActions() {
+        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+        addTrackingButton.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)
+        filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        searchBar.searchTextField.addTarget(self, action: #selector(searchTextChanged(_:)), for: .editingChanged)
+    }
+    
+    private func setupView(){
+        view.backgroundColor = .tWhite
+        configureNavigationBar()
+    }
+    
+    private func setupLayout() {
+        addViews()
+        addConstraints()
+    }
+    
+    private func bindViewModel() {
+        viewModel.onTrackersUpdated = { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+                self?.updateFilterButtonState()
+                self?.updateEmptyState()
+            }
+        }
+        
+        categoryViewModel.onCategoriesUpdated = { [weak self] _ in
+            self?.viewModel.loadTrackers()
+        }
+    }
+    
+    private func configureNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+    }
+    
     @objc private func dateChanged() {
         if viewModel.currentFilter == .today {
             viewModel.currentFilter = .all

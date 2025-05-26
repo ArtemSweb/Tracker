@@ -72,17 +72,24 @@ final class Dependency {
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [trackerNav, statsNav]
         
+        addTopLine(to: tabBarController.tabBar)
+        
+        return tabBarController
+    }
+    
+    //MARK: - Приватные методы
+    private func addTopLine(to tabBar: UITabBar) {
         let topLine = UIView()
         topLine.backgroundColor = .tGray
         topLine.translatesAutoresizingMaskIntoConstraints = false
-        tabBarController.tabBar.addSubview(topLine)
-        
+        tabBar.addSubview(topLine)
+
         NSLayoutConstraint.activate([
-            topLine.topAnchor.constraint(equalTo: tabBarController.tabBar.topAnchor),
-            topLine.leadingAnchor.constraint(equalTo: tabBarController.tabBar.leadingAnchor),
-            topLine.trailingAnchor.constraint(equalTo: tabBarController.tabBar.trailingAnchor),
+            topLine.topAnchor.constraint(equalTo: tabBar.topAnchor),
+            topLine.leadingAnchor.constraint(equalTo: tabBar.leadingAnchor),
+            topLine.trailingAnchor.constraint(equalTo: tabBar.trailingAnchor),
             topLine.heightAnchor.constraint(equalToConstant: 0.5)
         ])
-        return tabBarController
     }
+
 }
