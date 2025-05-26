@@ -7,16 +7,16 @@
 
 import UIKit
 
-class TrackerViewController: UIViewController, UICollectionViewDelegate {
+final class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
-    private let viewModel: TrackerViewModel
+    let viewModel: TrackerViewModel
     private let categoryViewModel: TrackerCategoryViewModel
     
     // MARK: - UI компоненты
     private let addTrackingButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("", for: .normal)
-        button.setImage(UIImage(resource: .plus).withRenderingMode(.alwaysOriginal), for: .normal)
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(resource: .addTrackerButton).withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = .tBlack
         return button
     }()
     
@@ -29,7 +29,7 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     private let headerTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = L10n.trackers
         label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         label.textColor = .tBlack
         return label
@@ -37,19 +37,30 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
-        searchBar.placeholder = "Поиск"
+        searchBar.placeholder = L10n.search
         searchBar.searchBarStyle = .minimal
+        searchBar.searchTextField.textColor = .tBlack
+        
+        if let imageView = searchBar.searchTextField.leftView as? UIImageView {
+            imageView.tintColor = .searchbarBackground
+        }
+        
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(
+            string: L10n.search,
+            attributes: [.foregroundColor: UIColor(resource: .searchbarPlaceholder)]
+        )
         return searchBar
     }()
     
     private let plagImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(resource: .starIcon))
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
     private let plagLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = L10n.whatShallWeTrack
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .tBlack
         return label
@@ -61,6 +72,43 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
         stackView.alignment = .center
         stackView.distribution = .fill
         stackView.spacing = 8
+        return stackView
+    }()
+    
+    private let filterButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle(L10n.filters, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        button.backgroundColor = .tBlue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.isHidden = true
+        return button
+    }()
+    
+    private let filterImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(resource: .notFountPlaceholder))
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    private let filterLabel: UILabel = {
+        let label = UILabel()
+        label.text = L10n.nothingFound
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .tBlack
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private let filterStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.spacing = 8
+        stackView.isHidden = true
         return stackView
     }()
     
@@ -95,35 +143,115 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
     //MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
-        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
-        addTrackingButton.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+        setupView()
+        setupLayout()
+        setupActions()
+        bindViewModel()
         
         viewModel.loadTrackers()
-        viewModel.trackerStore.delegate = self
-        
+        updateFilterButtonState()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsService.shared.sendEvent(event: "open", screen: "Main")
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        AnalyticsService.shared.sendEvent(event: "close", screen: "Main")
+    }
+    
+    //MARK: - вспомогательные функции
+    private func setupActions() {
+        datePicker.addTarget(self, action: #selector(dateChanged), for: .valueChanged)
+        addTrackingButton.addTarget(self, action: #selector(addTrackingButtonTapped), for: .touchUpInside)
+        filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        searchBar.searchTextField.addTarget(self, action: #selector(searchTextChanged(_:)), for: .editingChanged)
+    }
+    
+    private func setupView(){
+        view.backgroundColor = .tWhite
+        configureNavigationBar()
+    }
+    
+    private func setupLayout() {
         addViews()
         addConstraints()
     }
     
-    //MARK: - вспомогательные функции
+    private func bindViewModel() {
+        viewModel.onTrackersUpdated = { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+                self?.updateFilterButtonState()
+                self?.updateEmptyState()
+            }
+        }
+        
+        categoryViewModel.onCategoriesUpdated = { [weak self] _ in
+            self?.viewModel.loadTrackers()
+        }
+    }
+    
+    private func configureNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addTrackingButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+    }
+    
     @objc private func dateChanged() {
+        if viewModel.currentFilter == .today {
+            viewModel.currentFilter = .all
+        }
         collectionView.reloadData()
+        updateFilterButtonState()
+        updateEmptyState()
+    }
+    
+    @objc private func searchTextChanged(_ sender: UITextField) {
+        let text = sender.text ?? ""
+        viewModel.filterTrackers(by: text)
+        collectionView.reloadData()
+        self.updateEmptyState()
     }
     
     private func addViews() {
-        [plagStackView, headerTitleLabel, searchBar, collectionView].forEach {
+        [plagStackView, filterStackView, headerTitleLabel, searchBar, collectionView, filterButton].forEach {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        view.addSubview(plagStackView)
         
         [plagImageView, plagLabel].forEach {
             plagStackView.addArrangedSubview($0)
+        }
+        [filterImageView, filterLabel].forEach {
+            filterStackView.addArrangedSubview($0)
+        }
+    }
+    
+    private func updateFilterButtonState() {
+        filterButton.isHidden = !viewModel.hasAnyTrackers(for: currentDate)
+    }
+    
+    private func updateEmptyState() {
+        let hasAny = viewModel.hasAnyTrackers(for: currentDate)
+        let visible = viewModel.totalVisibleTrackers(for: currentDate)
+
+        if !hasAny {
+            plagStackView.isHidden = false
+            filterStackView.isHidden = true
+            filterButton.isHidden = true
+        }
+        else if visible == 0 {
+            plagStackView.isHidden = true
+            filterStackView.isHidden = false
+            filterButton.isHidden = false
+        }
+        else {
+            plagStackView.isHidden = true
+            filterStackView.isHidden = true
+            filterButton.isHidden = false
         }
     }
     
@@ -145,10 +273,21 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
             plagImageView.widthAnchor.constraint(equalToConstant: 80),
             plagImageView.heightAnchor.constraint(equalToConstant: 80),
             
+            filterStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            filterStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            filterStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            filterStackView.widthAnchor.constraint(equalToConstant: 80),
+            filterStackView.heightAnchor.constraint(equalToConstant: 80),
+            
             collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 24),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: filterButton.topAnchor, constant: -16),
+            
+            filterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 130),
+            filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -130),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
     
@@ -163,8 +302,27 @@ class TrackerViewController: UIViewController, UICollectionViewDelegate {
             for tracker in newCategory.trackers {
                 self.viewModel.addTracker(tracker, toCategoryWithTitle: newCategory.name)
             }
+            self.viewModel.loadTrackers()
         }
+        AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "add_track")
         toRepresentAsSheet(createTrackerSelection)
+    }
+    
+    @objc private func filterButtonTapped() {
+        let filterVC = TrackerFilterViewController(currentFilter: viewModel.currentFilter)
+        filterVC.onFilterSelected = { [weak self] filter in
+            guard let self = self else { return }
+            self.viewModel.currentFilter = filter
+            if filter == .today {
+                let today = Date()
+                self.datePicker.setDate(today, animated: true)
+            }
+            self.collectionView.reloadData()
+            self.updateFilterButtonState()
+            self.updateEmptyState()
+        }
+        AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "filter")
+        toRepresentAsSheet(filterVC)
     }
 }
 
@@ -198,6 +356,8 @@ extension TrackerViewController: UICollectionViewDataSource {
             
             let today = Calendar.current.startOfDay(for: Date())
             guard self.currentDate <= today else { return }
+            
+            AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "track")
             
             self.viewModel.toggleTrackerCompletion(trackerID: tracker.id, on: self.currentDate)
             if let cell = self.collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell {
@@ -264,11 +424,85 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: collectionView.bounds.width, height: 30)
     }
     
-}
-
-extension TrackerViewController: TrackerStoreDelegate {
-    func didUpdateTrackers() {
-        viewModel.loadTrackers()
-        collectionView.reloadData()
+    func collectionView(_ collectionView: UICollectionView,
+                        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard
+            let indexPath = configuration.identifier as? IndexPath,
+            let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
+        else {
+            return nil
+        }
+        
+        return cell.targetedPreview()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard
+            let indexPath = configuration.identifier as? IndexPath,
+            let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
+        else {
+            return nil
+        }
+        
+        return cell.targetedPreview()
     }
 }
+
+
+extension TrackerViewController {
+    
+    // MARK: - Контекстное меню для трекера
+    func collectionView(_ collectionView: UICollectionView,
+                        contextMenuConfigurationForItemAt indexPath: IndexPath,
+                        point: CGPoint) -> UIContextMenuConfiguration? {
+        let tracker = viewModel.tracker(at: indexPath, for: currentDate)
+        let isPinned = tracker.isPinned
+        
+        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil) { [weak self] _ in
+            let pinAction = UIAction(title: isPinned ? L10n.unpin : L10n.pin) { _ in
+                self?.viewModel.togglePin(for: tracker)
+            }
+            let editAction = UIAction(title: L10n.edit) { [weak self] _ in
+                self?.startEditFlow(for: tracker)
+                AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "edit")
+            }
+            let deleteAction = UIAction(title: L10n.delete, attributes: .destructive) { [weak self] _ in
+                self?.showDeleteConfirmation(for: tracker)
+                AnalyticsService.shared.sendEvent(event: "click", screen: "Main", item: "delete")
+            }
+            return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
+        }
+    }
+    
+    func startEditFlow(for tracker: Tracker) {
+        guard findCategoryFor(tracker: tracker) != nil else { return }
+        
+        let editVC = EditHabitViewController()
+        editVC.viewModel = viewModel
+        editVC.categoryViewModel = categoryViewModel
+        editVC.editingTracker = tracker
+        
+        toRepresentAsSheet(editVC)
+    }
+    
+    private func findCategoryFor(tracker: Tracker) -> TrackerCategory? {
+        return viewModel.categories.first { category in
+            category.trackers.contains(where: { $0.id == tracker.id })
+        }
+    }
+    
+    func showDeleteConfirmation(for tracker: Tracker) {
+        let alert = UIAlertController(
+            title: "",
+            message: L10n.titleDeleteTracker,
+            preferredStyle: .actionSheet
+        )
+        alert.addAction(UIAlertAction(title: L10n.delete, style: .destructive, handler: { [weak self] _ in
+            self?.viewModel.deleteTracker(for: tracker)
+        }))
+        alert.addAction(UIAlertAction(title: L10n.cancelButton, style: .cancel))
+        present(alert, animated: true)
+    }
+}
+

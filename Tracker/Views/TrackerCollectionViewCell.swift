@@ -21,6 +21,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return emojiLabel
     }()
     
+    private let pinImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "pin.fill"))
+        imageView.tintColor = .white
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isHidden = true
+        return imageView
+    }()
+    
     let titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.textColor = .white
@@ -73,7 +81,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(cardView)
         cardView.translatesAutoresizingMaskIntoConstraints = false
         
-        [emojiLabel, titleLabel].forEach { elem in
+        [emojiLabel, titleLabel, pinImageView].forEach { elem in
             elem.translatesAutoresizingMaskIntoConstraints = false
             cardView.addSubview(elem)
         }
@@ -96,6 +104,11 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             emojiLabel.widthAnchor.constraint(equalToConstant: 24),
             emojiLabel.heightAnchor.constraint(equalToConstant: 24),
             
+            pinImageView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 18),
+            pinImageView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
+            pinImageView.widthAnchor.constraint(equalToConstant: 8),
+            pinImageView.heightAnchor.constraint(equalToConstant: 12),
+            
             titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
             titleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
             titleLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -12),
@@ -114,7 +127,9 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     func configure(with tracker: Tracker, completedDays: Int, isCompletedToday: Bool) {
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
-        daysLabel.text = "\(completedDays) \(dayWord(for: completedDays))"
+        let format = NSLocalizedString("numberOfDays", comment: "")
+        let result = String.localizedStringWithFormat(format, completedDays)
+        daysLabel.text = result
         
         cardView.backgroundColor = tracker.color
         
@@ -124,27 +139,21 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         plusButton.setImage(icon, for: .normal)
         plusButton.tintColor = .white
         plusButton.backgroundColor = tracker.color.withAlphaComponent(isCompletedToday ? 0.3 : 1.0)
-    }
-    
-    private func dayWord(for count: Int) -> String {
-        let remainderOfHundred = count % 100
-        let remainderOfTen = count % 10
         
-        if remainderOfHundred >= 11 && remainderOfHundred <= 14 {
-            return "дней"
-        }
-        
-        switch remainderOfTen {
-        case 1:
-            return "день"
-        case 2, 3, 4:
-            return "дня"
-        default:
-            return "дней"
-        }
+        pinImageView.isHidden = !tracker.isPinned
     }
     
     @objc private func plusButtonTapped() {
         onPlusButtonTapped?()
+    }
+    
+    func targetedPreview() -> UITargetedPreview {
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = .clear
+        parameters.visiblePath = UIBezierPath(
+            roundedRect: cardView.bounds,
+            cornerRadius: cardView.layer.cornerRadius
+        )
+        return UITargetedPreview(view: cardView, parameters: parameters)
     }
 }

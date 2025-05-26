@@ -40,44 +40,56 @@ final class Dependency {
     }
     
     func makeStatisticViewModel() -> StatisticViewModel {
-        StatisticViewModel()
+        let grouped = trackerStore.fetchTrackersGroupedByCategory()
+        let trackers = grouped.flatMap { $0.trackers }
+        let records = trackerRecordStore.fetchAllRecords()
+        return StatisticViewModel(trackers: trackers, records: records)
     }
     
-    func makeTrackerViewController() -> UIViewController {
+    func makeTrackerViewController(statisticsCallback: @escaping (StatisticViewModel) -> Void) -> UIViewController {
         let viewModel = makeTrackerViewModel()
+        viewModel.onStatisticUpdate = statisticsCallback
         let categoryViewModel = TrackerCategoryViewModel(categoryStore: trackerCategoryStore)
+        
         return TrackerViewController(viewModel: viewModel, categoryViewModel: categoryViewModel)
-    }
-    
-    func makeStatisticViewController() -> UIViewController {
-        let viewModel = makeStatisticViewModel()
-        return StatisticViewController(viewModel: viewModel)
     }
     
     // MARK: - TabBarController
     func makeTabBarController() -> UITabBarController {
-        let trackerVC = makeTrackerViewController()
-        let trackerNav = UINavigationController(rootViewController: trackerVC)
-        trackerNav.tabBarItem = UITabBarItem(title: "Трекеры", image: UIImage(resource: .tabItemTracker), tag: 0)
         
-        let statsVC = makeStatisticViewController()
+        let statVM = makeStatisticViewModel()
+        let statsVC = StatisticViewController(viewModel: statVM)
+        let trackerVC = makeTrackerViewController{ updatedStat in
+            statsVC.update(with: updatedStat)
+        }
+        
+        let trackerNav = UINavigationController(rootViewController: trackerVC)
+        trackerNav.tabBarItem = UITabBarItem(title: L10n.trackers, image: UIImage(resource: .tabItemTracker), tag: 0)
+
         let statsNav = UINavigationController(rootViewController: statsVC)
-        statsNav.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(resource: .tabItemStatistic), tag: 1)
+        statsNav.tabBarItem = UITabBarItem(title: L10n.statistic, image: UIImage(resource: .tabItemStatistic), tag: 1)
         
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [trackerNav, statsNav]
         
-        let topLine = UIView()
-        topLine.backgroundColor = UIColor.tGray
-        topLine.translatesAutoresizingMaskIntoConstraints = false
-        tabBarController.tabBar.addSubview(topLine)
+        addTopLine(to: tabBarController.tabBar)
         
-        NSLayoutConstraint.activate([
-            topLine.topAnchor.constraint(equalTo: tabBarController.tabBar.topAnchor),
-            topLine.leadingAnchor.constraint(equalTo: tabBarController.tabBar.leadingAnchor),
-            topLine.trailingAnchor.constraint(equalTo: tabBarController.tabBar.trailingAnchor),
-            topLine.heightAnchor.constraint(equalToConstant: 0.5)
-        ])
         return tabBarController
     }
+    
+    //MARK: - Приватные методы
+    private func addTopLine(to tabBar: UITabBar) {
+        let topLine = UIView()
+        topLine.backgroundColor = .tGray
+        topLine.translatesAutoresizingMaskIntoConstraints = false
+        tabBar.addSubview(topLine)
+
+        NSLayoutConstraint.activate([
+            topLine.topAnchor.constraint(equalTo: tabBar.topAnchor),
+            topLine.leadingAnchor.constraint(equalTo: tabBar.leadingAnchor),
+            topLine.trailingAnchor.constraint(equalTo: tabBar.trailingAnchor),
+            topLine.heightAnchor.constraint(equalToConstant: 0.5)
+        ])
+    }
+
 }

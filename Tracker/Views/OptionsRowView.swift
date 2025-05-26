@@ -18,7 +18,7 @@ final class OptionsRowView: UIView {
     
     init(title: String) {
         super.init(frame: .zero)
-        backgroundColor = .backgroundGray.withAlphaComponent(0.3)
+        backgroundColor = .backgroundGray
         
         titleLabel.text = title
         titleLabel.font = .systemFont(ofSize: 17, weight: .medium)

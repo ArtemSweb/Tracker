@@ -6,6 +6,11 @@
 //
 
 import UIKit
+import YandexMobileMetrica
+
+private enum Constants {
+    static let metricaAPIKey = "e4017a71-ba9b-44be-99b7-d5fa34d1265a"
+}
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +19,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow()
+        
+        guard let configuration = YMMYandexMetricaConfiguration(apiKey: Constants.metricaAPIKey) else {
+                return true
+            }
+                
+        YMMYandexMetrica.activate(with: configuration)
         
         return true
     }

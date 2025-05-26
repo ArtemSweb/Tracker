@@ -10,12 +10,13 @@ import UIKit
 final class CategoryCell: UITableViewCell {
     lazy private var titleLabel = UILabel()
     lazy private var separator = UIView()
+    lazy private var checkmarkImageView = UIImageView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         backgroundColor = .clear
-        contentView.backgroundColor = .backgroundGray.withAlphaComponent(0.3)
+        contentView.backgroundColor = .backgroundGray
         contentView.layer.masksToBounds = true
         setupUI()
     }
@@ -39,7 +40,7 @@ final class CategoryCell: UITableViewCell {
             separator.heightAnchor.constraint(equalToConstant: 0.5),
             separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
     
